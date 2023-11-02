@@ -1,0 +1,25 @@
+.messageList {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+  border: 1px solid black;
+  border-radius: 8px;
+  padding: 16px;
+  overflow: hidden;
+  overflow-y: scroll;
+
+  .message {
+    width: 60%;
+
+    &.incoming {
+      align-self: flex-start;
+    }
+
+    &.outgoing {
+      text-align: right;
+      align-self: flex-end;
+    }
+  }
+}

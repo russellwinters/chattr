@@ -7,11 +7,22 @@ type Data = {
   name: string;
 };
 
-export default async function handler(
+type TranslatePayload = {
+  text: string;
+};
+
+export default async function POST(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const result = await translator.translateText("Hello, world!", null, "es");
+  const data = await req.body;
+
+  if (!data.text) {
+    res.status(400).json({ message: "Please send text to translate" });
+    return;
+  }
+
+  const result = await translator.translateText(data.text, null, "es");
 
   res.status(200).json({ result });
 }

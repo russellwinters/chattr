@@ -1,0 +1,15 @@
+.messageBox {
+  padding: 8px 16px;
+  border-radius: 4px;
+
+  &.incoming {
+    color: white;
+    background-color: black;
+  }
+
+  &.outgoing {
+    color: black;
+    background-color: white;
+    border: 1px solid black;
+  }
+}

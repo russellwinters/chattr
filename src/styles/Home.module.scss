@@ -1,0 +1,14 @@
+.main {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 56px;
+
+  align-items: center;
+  padding: 6rem;
+  min-height: 100vh;
+  overflow: hidden;
+
+  .messageList {
+    overflow: auto;
+  }
+}
