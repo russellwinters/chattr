@@ -1,1 +1,3 @@
-export { MessageBox } from "./MessageBox.tsx";
+import MessageBox from "./MessageBox";
+
+export default MessageBox;

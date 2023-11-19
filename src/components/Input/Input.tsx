@@ -1,12 +1,12 @@
 import cx from "classnames";
-import { FC } from "react";
+import { ChangeEventHandler, FC, KeyboardEventHandler } from "react";
 import styles from "./Input.module.scss";
 
 type Props = {
   label: string;
   value: string | undefined;
-  onChange: (val: string) => void;
-  onKeyDown?: (e) => void;
+  onChange: ChangeEventHandler<HTMLInputElement>;
+  onKeyDown?: KeyboardEventHandler<HTMLInputElement>;
   classNames?: string;
 };
 

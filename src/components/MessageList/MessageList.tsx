@@ -1,8 +1,9 @@
 import cx from "classnames";
 import { FC } from "react";
-import { MessageBox } from "../MessageBox";
+import MessageBox from "../MessageBox";
 import styles from "./MessageList.module.scss";
 import { useEffect, useState } from "react";
+
 type Props = {
   classNames?: string;
 };
@@ -24,7 +25,7 @@ const MessageList: FC<Props> = ({ classNames }) => {
   ]);
 
   useEffect(() => {
-    const messageReceiver = (e) => {
+    const messageReceiver = (e: any) => {
       if (e.detail.payload) {
         setMessages((prev) => [...prev, e.detail.payload]);
       }

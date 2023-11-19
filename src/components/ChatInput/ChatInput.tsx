@@ -1,7 +1,4 @@
-import {
-  dispatchIncomingEvent,
-  dispatchOutgoingEvent,
-} from "../../../utils/events.ts";
+import { dispatchIncomingEvent, dispatchOutgoingEvent } from "@/utils/events";
 import { FC, useState } from "react";
 import Button from "../Button";
 import Input from "../Input";
@@ -46,8 +43,8 @@ const ChatInput: FC = () => {
           }
         }}
         onKeyDown={(e) => {
-          if (e?.key === "Enter") {
-            event.preventDefault();
+          if (e?.key === "Enter" && value) {
+            e.preventDefault();
             handleTranslation(value);
             dispatchOutgoingEvent(value);
             setValue(undefined);

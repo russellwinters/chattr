@@ -1,1 +1,3 @@
-export { MessageList } from "./MessageList.tsx";
+import MessageList from "./MessageList";
+
+export default MessageList;
