@@ -1,10 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import * as deepl from "deepl-node";
 const authKey = process.env.DEEPL_API_KEY; // Replace with your key
-const translator = new deepl.Translator(authKey);
+const translator = new deepl.Translator(authKey || "");
 
 type Data = {
-  name: string;
+  result: deepl.TextResult;
 };
 
 export default async function handler(
