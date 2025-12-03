@@ -1,38 +1,79 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Chattr
 
-## Getting Started
+A real-time translation chat application that translates English text to Spanish using the DeepL API.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+- Chat-style interface for text translation
+- Real-time English to Spanish translation via DeepL
+- Message history with incoming/outgoing message display
+- Simple, clean UI built with React and SASS
+
+## Prerequisites
+
+- Node.js 20.x or higher
+- DeepL API key ([get one here](https://www.deepl.com/pro-api))
+
+## Setup
+
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Create a `.env.local` file in the root directory and add your DeepL API key:
+   ```
+   DEEPL_API_KEY=your_api_key_here
+   ```
+
+4. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+5. Open [http://localhost:3000](http://localhost:3000)
+
+## Usage
+
+Type your English text in the input field and press Enter or click Submit. The app will display your message and return a Spanish translation.
+
+## Tech Stack
+
+- **Framework**: Next.js 14
+- **Language**: TypeScript
+- **Styling**: SASS with CSS Modules
+- **Translation**: DeepL Node SDK
+- **UI**: React 18
+
+## Project Structure
+
+```
+src/
+├── components/
+│   ├── Button/           # Submit button component
+│   ├── ChatInput/        # Input field with translation logic
+│   ├── Input/            # Base input component
+│   ├── MessageBox/       # Individual message display
+│   └── MessageList/      # Message history container
+├── pages/
+│   ├── api/
+│   │   └── translate.ts  # DeepL translation endpoint
+│   └── index.tsx         # Main chat page
+└── utils/
+    └── events.ts         # Custom event system for messages
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## MVP Roadmap
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+- [ ] Multi-language support with language selector
+- [ ] Bidirectional translation
+- [ ] Translation history persistence
+- [ ] User preferences and settings
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+## Available Scripts
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
