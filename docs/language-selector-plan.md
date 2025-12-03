@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-This document specifies the design and implementation plan for the `LanguageSelector` component, which will enable users to select target languages for translation in the chattr application. Currently, the application only supports translation from English to Spanish. This component will allow users to choose from all 30+ languages supported by the DeepL API.
+This document specifies the design and implementation plan for the `LanguageSelector` component, which will enable users to select target languages for translation in the chattr application. Currently, the application only supports translation from English to Spanish. This component will allow users to choose from all 31 languages supported by the DeepL API.
 
 ## Problem Statement
 
@@ -212,8 +212,37 @@ Update `/src/styles/Home.module.scss`:
 
 ### Responsive Considerations
 
-- Mobile (<768px): Stack label and dropdown vertically
-- Tablet/Desktop (≥768px): Horizontal layout as shown above
+**Breakpoints**:
+- **Mobile** (<768px): Stack label above dropdown vertically, both full width
+- **Tablet/Desktop** (≥768px): Horizontal layout with label and dropdown side-by-side
+
+**Responsive Styles**:
+```scss
+.container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  
+  @media (max-width: 767px) {
+    flex-direction: column;
+    align-items: flex-start;
+    
+    .select {
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+  
+  @media (min-width: 768px) {
+    flex-direction: row;
+    
+    .select {
+      max-width: 300px;
+    }
+  }
+}
+```
 
 ## Data Flow
 
@@ -246,15 +275,33 @@ const result = await translator.translateText(data.text, null, "es");
 
 **New**:
 ```typescript
-const targetLang = data.targetLanguage || "es";  // Default to Spanish
+// Validate and default the target language
+const VALID_LANGUAGES = new Set([
+  'bg', 'cs', 'da', 'de', 'el', 'es', 'et', 'fi', 'fr', 
+  'hu', 'id', 'it', 'ja', 'ko', 'lt', 'lv', 'nb', 'nl', 
+  'pl', 'ro', 'ru', 'sk', 'sl', 'sv', 'tr', 'uk', 'zh',
+  'en-GB', 'en-US', 'pt-BR', 'pt-PT'
+]);
+
+const targetLang = data.targetLanguage && VALID_LANGUAGES.has(data.targetLanguage) 
+  ? data.targetLanguage 
+  : "es";  // Default to Spanish if invalid or missing
+
 const result = await translator.translateText(data.text, null, targetLang);
 ```
 
 **Request Body Type**:
 ```typescript
+// For better type safety, define a union type of valid language codes
+type TargetLanguageCode = 
+  | 'bg' | 'cs' | 'da' | 'de' | 'el' | 'es' | 'et' | 'fi' | 'fr' 
+  | 'hu' | 'id' | 'it' | 'ja' | 'ko' | 'lt' | 'lv' | 'nb' | 'nl' 
+  | 'pl' | 'ro' | 'ru' | 'sk' | 'sl' | 'sv' | 'tr' | 'uk' | 'zh'
+  | 'en-GB' | 'en-US' | 'pt-BR' | 'pt-PT';
+
 type TranslateRequest = {
   text: string;
-  targetLanguage?: string;  // New optional field
+  targetLanguage?: TargetLanguageCode;  // Union type for type safety
 };
 ```
 

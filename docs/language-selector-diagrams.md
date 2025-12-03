@@ -150,13 +150,15 @@ chattr/
 └───────────────────────────────┘
 ┌───────────────────────────────┐
 │  Translate to:                │  ← LanguageSelector
-│  [Spanish (Español)      ▼]  │     (stacked)
+│  [Spanish (Español)      ▼]  │     (stacked, full width)
 └───────────────────────────────┘
 ┌───────────────────────────────┐
 │  [Type here...          ]     │  ← ChatInput
 │  [      Submit          ]     │
 └───────────────────────────────┘
 ```
+
+**Note**: Layout switches at 768px breakpoint using CSS media query `@media (max-width: 767px)`
 
 ## API Request Flow
 
