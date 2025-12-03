@@ -102,27 +102,28 @@ type LanguageContextType = {
 
 ## DOM Placement & Layout
 
-### Primary Location: Above Chat Input
+### Primary Location: Top of Application
 
-**Placement**: Between `MessageList` and `ChatInput` in `/src/pages/index.tsx`
+**Placement**: At the top of the page in `/src/pages/index.tsx`, above `MessageList`
 
 **Layout Justification**:
-- Logically positioned near the input where users compose messages
-- Visible without scrolling, ensuring easy access
-- Doesn't interfere with message viewing area
-- Maintains visual connection to translation functionality
+- Persistent visibility regardless of scroll position
+- Standard UI pattern for application-level settings
+- Establishes translation target context before viewing messages
+- Doesn't interfere with chat flow or message viewing
+- Clear separation between configuration and content
 
 ### Visual Design
 
 **Layout Structure**:
 ```
 ┌─────────────────────────────────────┐
+│  Translate to: [Language Dropdown]  │  ← New LanguageSelector (at top)
+└─────────────────────────────────────┘
+┌─────────────────────────────────────┐
 │                                     │
 │         Message List Area           │
 │                                     │
-└─────────────────────────────────────┘
-┌─────────────────────────────────────┐
-│  Translate to: [Language Dropdown]  │  ← New LanguageSelector
 └─────────────────────────────────────┘
 ┌─────────────────────────────────────┐
 │  [Input Field]         [Submit Btn] │  ← Existing ChatInput
@@ -136,7 +137,8 @@ Update `/src/styles/Home.module.scss`:
 .main {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 1fr auto 56px;  // Changed from "1fr 56px"
+  grid-template-rows: auto 1fr 56px;  // Changed from "1fr 56px"
+  // LanguageSelector + MessageList + ChatInput
   // ... existing styles
   
   .languageSelector {
@@ -145,15 +147,14 @@ Update `/src/styles/Home.module.scss`:
 }
 ```
 
-### Alternative Placement Considered: Top Navigation Bar
+### Alternative Placement Considered: Between MessageList and ChatInput
 
-**Pros**: Persistent visibility, standard UI pattern
+**Pros**: Near input functionality, visual connection to translation
 **Cons**: 
-- Requires new header/navigation component
-- Larger scope change
-- May feel disconnected from chat functionality
+- Separated from message input area
+- Less immediate visual connection to chat functionality
 
-**Decision**: Place above chat input for MVP; can be moved to navigation in future iteration if needed.
+**Decision**: Place at top of application for persistent visibility and standard UI pattern; configuration before content.
 
 ## Styling Approach
 
@@ -170,7 +171,8 @@ Update `/src/styles/Home.module.scss`:
 ```scss
 .container {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 12px;
   width: 100%;
   
@@ -182,8 +184,7 @@ Update `/src/styles/Home.module.scss`:
   }
   
   .select {
-    flex: 1;
-    max-width: 300px;
+    width: 100%;
     height: 40px;
     padding: 8px 12px;
     border: 1px solid #ccc;
@@ -207,42 +208,28 @@ Update `/src/styles/Home.module.scss`:
       cursor: not-allowed;
     }
   }
+  
+  // Tablet and desktop
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: center;
+    
+    .select {
+      flex: 1;
+      max-width: 300px;
+    }
+  }
 }
 ```
 
 ### Responsive Considerations
 
 **Breakpoints**:
-- **Mobile** (<768px): Stack label above dropdown vertically, both full width
+- **Mobile** (default): Stack label above dropdown vertically, both full width
 - **Tablet/Desktop** (≥768px): Horizontal layout with label and dropdown side-by-side
 
-**Responsive Styles**:
-```scss
-.container {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  
-  @media (max-width: 767px) {
-    flex-direction: column;
-    align-items: flex-start;
-    
-    .select {
-      width: 100%;
-      max-width: 100%;
-    }
-  }
-  
-  @media (min-width: 768px) {
-    flex-direction: row;
-    
-    .select {
-      max-width: 300px;
-    }
-  }
-}
-```
+**Mobile-First Approach**:
+The styles are defined mobile-first, with full mobile styles as the base. Then, a `min-width` media query at 768px updates the layout for larger screens. This follows modern CSS best practices and ensures the most critical styles (mobile) are loaded first.
 
 ## Data Flow
 
@@ -351,7 +338,7 @@ const response = await fetch("/api/translate", {
 
 6. **Update Main Page** (`/src/pages/index.tsx`)
    - Import LanguageSelector
-   - Add to layout between MessageList and ChatInput
+   - Add to layout at the top, above MessageList
    - Update grid styles
 
 7. **Update ChatInput** (`/src/components/ChatInput/ChatInput.tsx`)

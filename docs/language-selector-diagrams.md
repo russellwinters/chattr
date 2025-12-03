@@ -6,9 +6,9 @@
 App (_app.tsx)
 └── LanguageProvider (NEW)
     └── Home (index.tsx)
+        ├── LanguageSelector (NEW)
         ├── MessageList
         │   └── MessageBox (multiple)
-        ├── LanguageSelector (NEW)
         └── ChatInput
             ├── Input
             └── Button
@@ -112,6 +112,9 @@ chattr/
 ### Desktop View (≥768px)
 ```
 ┌─────────────────────────────────────────────────────────┐
+│  Translate to: [Spanish (Español)        ▼]            │  ← LanguageSelector (at top)
+└─────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────┐
 │                                                         │
 │                     Message List                        │
 │  ┌──────────────────────────────────────────────┐     │
@@ -125,15 +128,16 @@ chattr/
 │                                                         │
 └─────────────────────────────────────────────────────────┘
 ┌─────────────────────────────────────────────────────────┐
-│  Translate to: [Spanish (Español)        ▼]            │  ← LanguageSelector
-└─────────────────────────────────────────────────────────┘
-┌─────────────────────────────────────────────────────────┐
 │  [Type here...                    ] [ Submit ]          │  ← ChatInput
 └─────────────────────────────────────────────────────────┘
 ```
 
 ### Mobile View (<768px)
 ```
+┌───────────────────────────────┐
+│  Translate to:                │  ← LanguageSelector (at top)
+│  [Spanish (Español)      ▼]  │     (stacked, full width)
+└───────────────────────────────┘
 ┌───────────────────────────────┐
 │                               │
 │       Message List            │
@@ -149,16 +153,12 @@ chattr/
 │                               │
 └───────────────────────────────┘
 ┌───────────────────────────────┐
-│  Translate to:                │  ← LanguageSelector
-│  [Spanish (Español)      ▼]  │     (stacked, full width)
-└───────────────────────────────┘
-┌───────────────────────────────┐
 │  [Type here...          ]     │  ← ChatInput
 │  [      Submit          ]     │
 └───────────────────────────────┘
 ```
 
-**Note**: Layout switches at 768px breakpoint using CSS media query `@media (max-width: 767px)`
+**Note**: Layout switches at 768px breakpoint using CSS media query `@media (min-width: 768px)`
 
 ## API Request Flow
 
@@ -252,16 +252,16 @@ setTargetLanguage()   fetch('/api/translate', {
 .main {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 1fr auto 56px;  // MessageList + LanguageSelector + ChatInput
-  
-  .messageList {
-    grid-row: 1;      // Takes up expanding space
-    overflow: auto;
-  }
+  grid-template-rows: auto 1fr 56px;  // LanguageSelector + MessageList + ChatInput
   
   .languageSelector {
-    grid-row: 2;      // Auto-height based on content
+    grid-row: 1;      // Auto-height based on content
     padding: 12px 0;
+  }
+  
+  .messageList {
+    grid-row: 2;      // Takes up expanding space
+    overflow: auto;
   }
   
   .chatInput {

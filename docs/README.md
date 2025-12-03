@@ -73,7 +73,7 @@ A dropdown component that allows users to select from 31 different target langua
 
 ### How It Works
 - **State**: React Context + localStorage for persistence
-- **Placement**: Between MessageList and ChatInput
+- **Placement**: Top of application, above MessageList
 - **Styling**: SCSS modules matching existing design patterns
 - **Languages**: All 31 DeepL-supported target languages
 

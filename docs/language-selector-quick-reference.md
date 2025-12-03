@@ -11,9 +11,9 @@ Add a dropdown component to allow users to select target translation language (c
 - **Styling**: SCSS modules (matching existing pattern)
 
 ### Placement
-- **Location**: Between MessageList and ChatInput
+- **Location**: Top of the application, above MessageList
 - **Layout**: Horizontal label + dropdown on desktop, stacked on mobile
-- **Grid Update**: Change from 2 rows to 3 rows (1fr auto 56px)
+- **Grid Update**: Change from 2 rows to 3 rows (auto 1fr 56px)
 
 ### Languages
 - **Total**: 31 DeepL-supported target languages
@@ -32,11 +32,11 @@ Add a dropdown component to allow users to select target translation language (c
 
 ### Modified Files (6)
 1. `/src/pages/_app.tsx` - Wrap with `<LanguageProvider>`
-2. `/src/pages/index.tsx` - Add `<LanguageSelector>` to layout
+2. `/src/pages/index.tsx` - Add `<LanguageSelector>` at top of layout
 3. `/src/pages/api/translate.ts` - Accept `targetLanguage` param
 4. `/src/components/ChatInput/ChatInput.tsx` - Use context, send language to API
 5. `/src/components/index.ts` - Export LanguageSelector
-6. `/src/styles/Home.module.scss` - Update grid to 3 rows
+6. `/src/styles/Home.module.scss` - Update grid to 3 rows (auto 1fr 56px)
 
 ## Data Flow
 

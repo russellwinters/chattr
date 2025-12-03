@@ -65,8 +65,8 @@ This planning phase produced three comprehensive documents:
 **Rationale**: Application is small, no existing state management library, Context API is sufficient and follows React best practices. localStorage provides persistence without backend changes.
 
 ### Component Placement
-**Decision**: Between MessageList and ChatInput  
-**Rationale**: Logically connected to input functionality, visible without scrolling, doesn't disrupt message viewing, aligns with user's mental model of "configuring before sending."
+**Decision**: Top of the application, above MessageList  
+**Rationale**: Persistent visibility regardless of scroll position, standard UI pattern for application-level settings, establishes translation target context before viewing messages, clear separation between configuration and content.
 
 ### Styling
 **Decision**: SCSS modules with existing design patterns  
