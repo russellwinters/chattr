@@ -26,7 +26,6 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
   const [targetLanguage, setTargetLanguageState] = useState<TargetLanguageCode>(
     DEFAULT_TARGET_LANGUAGE
   );
-  const [isInitialized, setIsInitialized] = useState(false);
 
   // Load language from localStorage on mount
   useEffect(() => {
@@ -35,11 +34,10 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
       if (stored && VALID_LANGUAGE_CODES.has(stored)) {
         setTargetLanguageState(stored as TargetLanguageCode);
       }
-    } catch (error) {
+    } catch {
       // localStorage might be blocked or unavailable
-      console.warn("Failed to load language from localStorage:", error);
+      console.warn("Failed to load language from localStorage");
     }
-    setIsInitialized(true);
   }, []);
 
   // Save to localStorage when language changes
@@ -47,9 +45,9 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
     setTargetLanguageState(code);
     try {
       localStorage.setItem(LANGUAGE_STORAGE_KEY, code);
-    } catch (error) {
+    } catch {
       // localStorage might be blocked or unavailable
-      console.warn("Failed to save language to localStorage:", error);
+      console.warn("Failed to save language to localStorage");
     }
   };
 
@@ -58,12 +56,6 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
     setTargetLanguage,
     availableLanguages: SUPPORTED_LANGUAGES,
   };
-
-  // Don't render children until initial load from localStorage is complete
-  // to prevent flash of wrong language
-  if (!isInitialized) {
-    return null;
-  }
 
   return (
     <LanguageContext.Provider value={value}>
