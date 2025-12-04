@@ -1,6 +1,6 @@
-import { FC, useContext } from "react";
+import { FC } from "react";
 import cx from "classnames";
-import { LanguageContext } from "@/contexts/LanguageContext";
+import { useLanguage } from "@/hooks/useLanguage";
 import { TargetLanguageCode } from "@/utils/languages";
 import styles from "./LanguageSelector.module.scss";
 
@@ -13,13 +13,7 @@ const LanguageSelector: FC<LanguageSelectorProps> = ({
   classNames,
   disabled = false,
 }) => {
-  const context = useContext(LanguageContext);
-
-  if (!context) {
-    throw new Error("LanguageSelector must be used within a LanguageProvider");
-  }
-
-  const { targetLanguage, setTargetLanguage, availableLanguages } = context;
+  const { targetLanguage, setTargetLanguage, availableLanguages } = useLanguage();
 
   return (
     <div className={cx(styles.container, classNames)}>
