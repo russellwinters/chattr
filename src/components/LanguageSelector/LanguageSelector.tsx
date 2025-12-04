@@ -1,6 +1,7 @@
 import { FC, useContext } from "react";
 import cx from "classnames";
 import { LanguageContext } from "@/contexts/LanguageContext";
+import { TargetLanguageCode } from "@/utils/languages";
 import styles from "./LanguageSelector.module.scss";
 
 type LanguageSelectorProps = {
@@ -28,7 +29,7 @@ const LanguageSelector: FC<LanguageSelectorProps> = ({
       <select
         id="language-selector"
         value={targetLanguage}
-        onChange={(e) => setTargetLanguage(e.target.value as any)}
+        onChange={(e) => setTargetLanguage(e.target.value as TargetLanguageCode)}
         disabled={disabled}
         className={styles.select}
         aria-label="Select target translation language"
