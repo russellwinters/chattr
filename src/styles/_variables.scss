@@ -12,7 +12,7 @@ $size-spacing-sm: 8px;
 $size-spacing-md: 12px;
 
 // Box Shadow
-$box-shadow-focus: 0px 0px 0px 7px rgba(74, 157, 236, 0.2);
+$box-shadow-focus: 0px 0px 0px 7px rgba($color-primary, 0.2);
 
 // Transitions
 $transition-default: all 0.5s;
