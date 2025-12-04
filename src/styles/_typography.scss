@@ -1,0 +1,15 @@
+// Font Sizes
+$font-size-sm: 14px;
+$font-size-md: 17px;
+
+// Font Weights
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+
+// Label styles
+@mixin label-text {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
+  color: inherit;
+}
