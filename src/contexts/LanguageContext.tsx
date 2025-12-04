@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, { createContext, useState, useEffect, ReactNode } from "react";
 import {
   TargetLanguageCode,
   LanguageOption,
@@ -16,59 +16,48 @@ type LanguageContextType = {
   availableLanguages: readonly LanguageOption[];
 };
 
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+export const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+
+export type { LanguageContextType };
 
 type LanguageProviderProps = {
   children: ReactNode;
 };
 
 export function LanguageProvider({ children }: LanguageProviderProps) {
-  const [targetLanguage, setTargetLanguageState] = useState<TargetLanguageCode>(
+  const [targetLanguage, setTargetLanguage] = useState<TargetLanguageCode>(
     DEFAULT_TARGET_LANGUAGE
   );
 
-  // Load language from localStorage on mount
   useEffect(() => {
     try {
       const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY);
       if (stored && VALID_LANGUAGE_CODES.has(stored)) {
-        setTargetLanguageState(stored as TargetLanguageCode);
+        setTargetLanguage(stored as TargetLanguageCode);
       }
     } catch {
-      // localStorage might be blocked or unavailable
       console.warn("Failed to load language from localStorage");
     }
   }, []);
 
-  // Save to localStorage when language changes
-  const setTargetLanguage = (code: TargetLanguageCode) => {
-    setTargetLanguageState(code);
+  const updateTargetLanguage = (code: TargetLanguageCode) => {
+    setTargetLanguage(code);
     try {
       localStorage.setItem(LANGUAGE_STORAGE_KEY, code);
     } catch {
-      // localStorage might be blocked or unavailable
       console.warn("Failed to save language to localStorage");
     }
   };
 
-  const value: LanguageContextType = {
+  const ctx: LanguageContextType = {
     targetLanguage,
-    setTargetLanguage,
+    setTargetLanguage: updateTargetLanguage,
     availableLanguages: SUPPORTED_LANGUAGES,
   };
 
   return (
-    <LanguageContext.Provider value={value}>
+    <LanguageContext.Provider value={ctx}>
       {children}
     </LanguageContext.Provider>
   );
-}
-
-// Custom hook for using the language context
-export function useLanguage(): LanguageContextType {
-  const context = useContext(LanguageContext);
-  if (context === undefined) {
-    throw new Error("useLanguage must be used within a LanguageProvider");
-  }
-  return context;
 }

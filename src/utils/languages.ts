@@ -1,5 +1,4 @@
-// Supported target languages for DeepL translation API
-// Based on DeepL's TargetLanguageCode type
+// Based on DeepL's TargetLanguageCode type: https://github.com/DeepLcom/deepl-node?tab=readme-ov-file#target-languages
 
 export type TargetLanguageCode =
   | "bg"
@@ -40,7 +39,6 @@ export type LanguageOption = {
   nativeName: string;
 };
 
-// All 31 supported target languages with display names and native names
 export const SUPPORTED_LANGUAGES: readonly LanguageOption[] = [
   { code: "bg", name: "Bulgarian", nativeName: "Български" },
   { code: "cs", name: "Czech", nativeName: "Čeština" },
@@ -75,13 +73,10 @@ export const SUPPORTED_LANGUAGES: readonly LanguageOption[] = [
   { code: "zh", name: "Chinese", nativeName: "中文" },
 ] as const;
 
-// Default target language (Spanish)
 export const DEFAULT_TARGET_LANGUAGE: TargetLanguageCode = "es";
 
-// LocalStorage key for persisting selected language
 export const LANGUAGE_STORAGE_KEY = "chattr_target_language";
 
-// Set of valid language codes for validation
 export const VALID_LANGUAGE_CODES = new Set<string>(
   SUPPORTED_LANGUAGES.map((lang) => lang.code)
 );
