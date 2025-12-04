@@ -1,5 +1,3 @@
-// Based on DeepL's TargetLanguageCode type: https://github.com/DeepLcom/deepl-node?tab=readme-ov-file#target-languages
-
 export type TargetLanguageCode =
   | "bg"
   | "cs"

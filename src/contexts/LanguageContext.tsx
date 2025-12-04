@@ -25,7 +25,7 @@ type LanguageProviderProps = {
 };
 
 export function LanguageProvider({ children }: LanguageProviderProps) {
-  const [targetLanguage, setTargetLanguageState] = useState<TargetLanguageCode>(
+  const [targetLanguage, setTargetLanguage] = useState<TargetLanguageCode>(
     DEFAULT_TARGET_LANGUAGE
   );
 
@@ -33,15 +33,15 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
     try {
       const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY);
       if (stored && VALID_LANGUAGE_CODES.has(stored)) {
-        setTargetLanguageState(stored as TargetLanguageCode);
+        setTargetLanguage(stored as TargetLanguageCode);
       }
     } catch {
       console.warn("Failed to load language from localStorage");
     }
   }, []);
 
-  const setTargetLanguage = (code: TargetLanguageCode) => {
-    setTargetLanguageState(code);
+  const updateTargetLanguage = (code: TargetLanguageCode) => {
+    setTargetLanguage(code);
     try {
       localStorage.setItem(LANGUAGE_STORAGE_KEY, code);
     } catch {
@@ -51,7 +51,7 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
 
   const ctx: LanguageContextType = {
     targetLanguage,
-    setTargetLanguage,
+    setTargetLanguage: updateTargetLanguage,
     availableLanguages: SUPPORTED_LANGUAGES,
   };
 
