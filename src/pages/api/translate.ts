@@ -25,15 +25,18 @@ export default async function POST(
   }
 
   // Get targetLanguage from request, default to 'es'
-  const targetLanguage: TargetLanguageCode = data.targetLanguage || "es";
+  const requestedLanguage = data.targetLanguage || "es";
 
   // Validate targetLanguage
-  if (!VALID_LANGUAGE_CODES.has(targetLanguage)) {
+  if (!VALID_LANGUAGE_CODES.has(requestedLanguage)) {
     res.status(400).json({ 
-      message: `Invalid target language: ${targetLanguage}. Please provide a valid language code.` 
+      message: `Invalid target language: ${requestedLanguage}. Please provide a valid language code.` 
     });
     return;
   }
+
+  // Safe to cast after validation
+  const targetLanguage = requestedLanguage as TargetLanguageCode;
 
   const result = await translator.translateText(data.text, null, targetLanguage);
 
