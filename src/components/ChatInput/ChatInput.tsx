@@ -1,11 +1,13 @@
 import { dispatchIncomingEvent, dispatchOutgoingEvent } from "@/utils/events";
 import { FC, useState } from "react";
+import { useLanguage } from "@/hooks/useLanguage";
 import Button from "../Button";
 import Input from "../Input";
 import styles from "./ChatInput.module.scss";
 
 const ChatInput: FC = () => {
   const [value, setValue] = useState<string | undefined>();
+  const { targetLanguage } = useLanguage();
 
   const handleTranslation = async (value: string) => {
     const response = await fetch("/api/translate", {
@@ -15,6 +17,7 @@ const ChatInput: FC = () => {
       },
       body: JSON.stringify({
         text: value,
+        targetLanguage,
       }),
     });
 
