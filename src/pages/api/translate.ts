@@ -1,5 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import * as deepl from "deepl-node";
+import { VALID_LANGUAGE_CODES, TargetLanguageCode } from "@/utils/languages";
+
 const authKey = process.env.DEEPL_API_KEY; // Replace with your key
 const translator = new deepl.Translator(authKey || "");
 
@@ -22,7 +24,18 @@ export default async function POST(
     return;
   }
 
-  const result = await translator.translateText(data.text, null, "es");
+  // Get targetLanguage from request, default to 'es'
+  const targetLanguage: TargetLanguageCode = data.targetLanguage || "es";
+
+  // Validate targetLanguage
+  if (!VALID_LANGUAGE_CODES.has(targetLanguage)) {
+    res.status(400).json({ 
+      message: `Invalid target language: ${targetLanguage}. Please provide a valid language code.` 
+    });
+    return;
+  }
+
+  const result = await translator.translateText(data.text, null, targetLanguage);
 
   res.status(200).json({ result });
 }
