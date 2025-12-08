@@ -5,7 +5,7 @@ import { Inter } from "next/font/google";
 import MessageList from "@/components/MessageList";
 import styles from "@/styles/Home.module.css";
 import customSyles from "@/styles/Home.module.scss";
-import { LanguageSelector } from "@/components";
+import { LanguageSelector, ModeSelector } from "@/components";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,6 +19,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={customSyles.main}>
+        <ModeSelector />
         <LanguageSelector  />
         <MessageList classNames={customSyles.messageList} />
         <ChatInput />
