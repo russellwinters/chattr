@@ -19,6 +19,11 @@ type ModeProviderProps = {
 
 const MODE_STORAGE_KEY = "chattr_mode";
 const DEFAULT_MODE: Mode = "translation";
+const VALID_MODES: readonly Mode[] = ["translation", "conversation"];
+
+function isValidMode(value: string | null): value is Mode {
+  return value !== null && (VALID_MODES as readonly string[]).includes(value);
+}
 
 export function ModeProvider({ children }: ModeProviderProps) {
   const [mode, setMode] = useState<Mode>(DEFAULT_MODE);
@@ -26,8 +31,8 @@ export function ModeProvider({ children }: ModeProviderProps) {
   useEffect(() => {
     try {
       const stored = localStorage.getItem(MODE_STORAGE_KEY);
-      if (stored === "translation" || stored === "conversation") {
-        setMode(stored as Mode);
+      if (isValidMode(stored)) {
+        setMode(stored);
       }
     } catch {
       console.warn("Failed to load mode from localStorage");
