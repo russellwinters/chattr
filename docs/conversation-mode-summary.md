@@ -172,28 +172,28 @@ Translation (smaller, 0.7 opacity, italic)
 - Consistent with language learning apps
 - Doesn't clutter UI (translation is subtle)
 
-### 6. API Architecture: Three-Step Process
+### 6. API Architecture: Two-Step Process
 
-**Decision**: Translate → Generate → Back-translate
+**Decision**: Generate → Batch Translate
 
 **Flow**:
-1. DeepL translates user message to target language
-2. OpenAI generates response in target language
-3. DeepL translates response back to original language
+1. OpenAI generates conversational response in original language (user's language)
+2. DeepL batch-translates both user message and AI response to target language in single call
 
 **Rationale**:
-- Leverages strengths of each service (DeepL accuracy, OpenAI conversation)
-- Ensures accurate translations both directions
-- Maintains language learning context
-- Enables bilingual display for all messages
+- More efficient: Reduces API calls from 3 to 2
+- Natural conversation: LLM operates in user's native language
+- Better context: All conversation history maintained in original language
+- Cost effective: Single DeepL call instead of two separate calls
+- Simpler implementation: Fewer API orchestration steps
 
 ### 7. Error Handling: Graceful Fallbacks
 
 **Decision**: Multi-level fallback strategy
 
 **Levels**:
-1. Full flow: DeepL + OpenAI + DeepL
-2. If OpenAI fails: Simple acknowledgment + translation
+1. Full flow: OpenAI + DeepL batch translation
+2. If OpenAI fails: Simple translation-only response
 3. If all fails: User-friendly error message
 
 **Rationale**:
@@ -335,7 +335,7 @@ OPENAI_API_KEY=sk-...your-key-here...
 - Client setup, prompt engineering, testing
 
 **Phase 5: Conversation API** (3-4 hours)
-- Endpoint creation, 3-step flow, error handling
+- Endpoint creation, 2-step flow (AI → batch translate), error handling
 
 **Phase 6: ChatInput Enhancement** (1-2 hours)
 - Mode-aware logic, history tracking

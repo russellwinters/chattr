@@ -76,8 +76,8 @@ Transform chattr from a translation tool into a conversational language learning
 
 ### Phase 5: Conversation API (3-4 hours)
 - [ ] Create `/src/pages/api/conversation.ts`
-- [ ] Implement 3-step flow: translate → AI → back-translate
-- [ ] Add conversation history support
+- [ ] Implement 2-step flow: AI response → batch translate
+- [ ] Add conversation history support (in original language)
 - [ ] Implement error handling and fallbacks
 
 ### Phase 6: ChatInput Enhancement (1-2 hours)
@@ -236,40 +236,37 @@ const translator = new deepl.Translator(process.env.DEEPL_API_KEY || "");
 export default async function POST(req: NextApiRequest, res: NextApiResponse) {
   const { userMessage, targetLanguage, conversationHistory } = req.body;
 
-  // Step 1: Translate user message to target language
-  const userTranslation = await translator.translateText(
-    userMessage,
-    null,
-    targetLanguage
-  );
-
-  // Step 2: Generate AI response
+  // Step 1: Generate AI response in original language
   const completion = await openai.chat.completions.create({
     model: 'gpt-3.5-turbo',
     messages: [
       { 
         role: 'system', 
-        content: `You are a language learning assistant. Respond in ${targetLanguage}.` 
+        content: `You are a language learning assistant. Respond naturally in the user's language.` 
       },
-      ...conversationHistory.slice(-10),
-      { role: 'user', content: userTranslation.text }
+      ...conversationHistory.slice(-10), // Context in original language
+      { role: 'user', content: userMessage }
     ],
     max_tokens: 150,
   });
 
-  const assistantResponse = completion.choices[0].message.content;
+  const assistantResponseOriginal = completion.choices[0].message.content;
 
-  // Step 3: Translate response back
-  const responseTranslation = await translator.translateText(
-    assistantResponse,
-    targetLanguage,
-    userTranslation.detectedSourceLang
+  // Step 2: Batch translate both messages to target language
+  const combinedText = `${userMessage}\n|||DELIMITER|||\n${assistantResponseOriginal}`;
+  const translationResult = await translator.translateText(
+    combinedText,
+    null,
+    targetLanguage
   );
 
+  const [userMessageTranslation, assistantResponse] = 
+    translationResult.text.split('\n|||DELIMITER|||\n');
+
   res.status(200).json({
-    userMessageTranslation: userTranslation.text,
-    assistantResponse,
-    assistantResponseTranslation: responseTranslation.text,
+    userMessageTranslation: userMessageTranslation.trim(),
+    assistantResponse: assistantResponse.trim(),
+    assistantResponseTranslation: assistantResponseOriginal,
   });
 }
 ```
@@ -318,9 +315,8 @@ User Input → /api/translate → DeepL → Translation → Display
 ### Conversation Mode (New)
 ```
 User Input → /api/conversation →
-  ├─ Step 1: DeepL (user msg → target) 
-  ├─ Step 2: OpenAI (generate response in target)
-  └─ Step 3: DeepL (response → original)
+  ├─ Step 1: OpenAI (generate response in original language)
+  └─ Step 2: DeepL (batch translate user msg + AI response to target)
 → Display bilingual messages
 ```
 

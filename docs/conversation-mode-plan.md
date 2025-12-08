@@ -568,21 +568,20 @@ export const openai = new OpenAI({
 });
 
 export const createConversationMessages = (
-  targetLanguage: string,
   targetLanguageName: string,
   userMessage: string,
   history: Array<{ role: 'user' | 'assistant'; content: string }>
 ) => {
   const systemPrompt = `You are a helpful and friendly language learning assistant. 
 The user is practicing ${targetLanguageName}. 
-Always respond in ${targetLanguageName}. 
+Respond naturally in the user's language (the language they're writing in).
 Keep your responses concise (1-3 sentences) and conversational.
 Ask engaging follow-up questions to maintain natural dialogue.
 Be encouraging and supportive of their language learning journey.`;
 
   return [
     { role: 'system' as const, content: systemPrompt },
-    ...history.slice(-10), // Keep last 10 messages for context
+    ...history.slice(-10), // Keep last 10 messages for context (in original language)
     { role: 'user' as const, content: userMessage }
   ];
 };
@@ -641,33 +640,26 @@ export default async function POST(
   }
 
   try {
-    // Step 1: Translate user's message to target language
-    const userTranslationResult = await translator.translateText(
-      data.userMessage,
-      null, // Auto-detect source
-      data.targetLanguage as any
-    );
-
-    const userMessageTranslation = userTranslationResult.text;
-    const detectedSourceLanguage = userTranslationResult.detectedSourceLang?.toLowerCase();
-
-    // Step 2: Generate AI response in target language
+    // Step 1: Generate AI response in original language
     if (!process.env.OPENAI_API_KEY) {
       // Fallback: Simple echo response if no OpenAI key
-      const fallbackResponse = "I'm here to chat! (AI not configured)";
+      const fallbackTranslation = await translator.translateText(
+        data.userMessage,
+        null,
+        data.targetLanguage as any
+      );
+      
       return res.status(200).json({
-        userMessageTranslation,
-        assistantResponse: fallbackResponse,
-        assistantResponseTranslation: fallbackResponse,
-        detectedSourceLanguage,
+        userMessageTranslation: fallbackTranslation.text,
+        assistantResponse: fallbackTranslation.text,
+        assistantResponseTranslation: "I'm here to chat! (AI not configured)",
       });
     }
 
     const targetLanguageName = LANGUAGE_NAMES[data.targetLanguage] || data.targetLanguage;
     const messages = createConversationMessages(
-      data.targetLanguage,
       targetLanguageName,
-      userMessageTranslation,
+      data.userMessage,
       data.conversationHistory || []
     );
 
@@ -678,25 +670,28 @@ export default async function POST(
       temperature: 0.7,
     });
 
-    const assistantResponse = completion.choices[0]?.message?.content || 
+    const assistantResponseOriginal = completion.choices[0]?.message?.content || 
       "I'm not sure how to respond.";
 
-    // Step 3: Translate assistant's response back to user's language
-    let assistantResponseTranslation = assistantResponse;
-    if (detectedSourceLanguage && detectedSourceLanguage !== data.targetLanguage) {
-      const backTranslation = await translator.translateText(
-        assistantResponse,
-        data.targetLanguage as any,
-        detectedSourceLanguage as any
-      );
-      assistantResponseTranslation = backTranslation.text;
-    }
+    // Step 2: Translate both user message and AI response to target language in single call
+    // Combine texts with delimiter for batch translation
+    const combinedText = `${data.userMessage}\n|||DELIMITER|||\n${assistantResponseOriginal}`;
+    
+    const translationResult = await translator.translateText(
+      combinedText,
+      null, // Auto-detect source
+      data.targetLanguage as any
+    );
+
+    // Split the translated result back into separate parts
+    const [userMessageTranslation, assistantResponse] = 
+      translationResult.text.split('\n|||DELIMITER|||\n');
 
     return res.status(200).json({
-      userMessageTranslation,
-      assistantResponse,
-      assistantResponseTranslation,
-      detectedSourceLanguage,
+      userMessageTranslation: userMessageTranslation.trim(),
+      assistantResponse: assistantResponse.trim(),
+      assistantResponseTranslation: assistantResponseOriginal,
+      detectedSourceLanguage: translationResult.detectedSourceLang?.toLowerCase(),
     });
 
   } catch (error) {
@@ -801,7 +796,7 @@ const handleConversation = async (value: string) => {
 
 5. **Phase 5: Conversation API** (3-4 hours)
    - [ ] Create `/api/conversation` endpoint
-   - [ ] Implement 3-step flow: translate → AI → back-translate
+   - [ ] Implement 2-step flow: AI response → batch translate
    - [ ] Add conversation history support
    - [ ] Add error handling and fallbacks
    - [ ] Test with various languages and inputs
@@ -849,23 +844,21 @@ MessageList displays message
 
 ### Conversation Mode Flow (New)
 ```
-User types message
+User types message (in original language)
       ↓
 ChatInput captures input (stores to history)
       ↓
-Call /api/conversation with history
+Call /api/conversation with history (in original language)
       ↓
-Step 1: DeepL translates user message to target
+Step 1: OpenAI generates response in original language
       ↓
-Step 2: OpenAI generates response in target
+Step 2: DeepL batch-translates both messages to target language
       ↓
-Step 3: DeepL translates response back to source
-      ↓
-Return: {userTranslation, aiResponse, aiTranslation}
+Return: {userTranslation, aiResponseTarget, aiResponseOriginal}
       ↓
 Dispatch outgoing event (original + translation)
       ↓
-Dispatch incoming event (AI response + translation)
+Dispatch incoming event (AI response target + original)
       ↓
 MessageList displays both with bilingual format
 ```
@@ -1221,8 +1214,8 @@ describe('conversation API', () => {
 
 ### API Response Time
 - **Target**: < 3 seconds for conversation response
-- **Actual**: ~1-2 seconds (DeepL: 300ms, OpenAI: 1-2s, back-translate: 300ms)
-- **Optimization**: Could parallelize DeepL calls if needed
+- **Actual**: ~1-2 seconds (OpenAI: 1-2s, DeepL batch: 400-600ms)
+- **Optimization**: Batch translation reduces API calls and latency
 
 ### Loading States
 ```typescript

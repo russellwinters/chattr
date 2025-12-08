@@ -239,28 +239,25 @@ MessageBox (Enhanced)
 │  /api/conversation Endpoint                      │
 │                                                   │
 │  ┌─────────────────────────────────────────┐    │
-│  │ Step 1: Translate User Message          │    │
-│  │  DeepL: userMsg → targetLang            │    │
-│  │  Result: userMessageTranslation         │    │
-│  └─────────────┬───────────────────────────┘    │
-│                ↓                                 │
-│  ┌─────────────────────────────────────────┐    │
-│  │ Step 2: Generate AI Response            │    │
+│  │ Step 1: Generate AI Response            │    │
 │  │  OpenAI: Chat completion                │    │
-│  │  Prompt: System + History + User msg    │    │
-│  │  Result: assistantResponse (targetLang) │    │
+│  │  Input: userMessage (original language) │    │
+│  │  Context: History (in original language)│    │
+│  │  Result: assistantResponseOriginal      │    │
 │  └─────────────┬───────────────────────────┘    │
 │                ↓                                 │
 │  ┌─────────────────────────────────────────┐    │
-│  │ Step 3: Back-translate Response         │    │
-│  │  DeepL: assistantResponse → sourceLang  │    │
-│  │  Result: assistantResponseTranslation   │    │
+│  │ Step 2: Batch Translate Both Messages   │    │
+│  │  DeepL: Combined text → targetLang      │    │
+│  │  Input: userMsg + delimiter + aiResponse│    │
+│  │  Result: userMessageTranslation +       │    │
+│  │          assistantResponse (target)     │    │
 │  └─────────────┬───────────────────────────┘    │
 │                ↓                                 │
 │  Return {                                        │
 │    userMessageTranslation,                       │
-│    assistantResponse,                            │
-│    assistantResponseTranslation                  │
+│    assistantResponse (target language),          │
+│    assistantResponseTranslation (original)       │
 │  }                                               │
 └──────┬───────────────────────────────────────────┘
        │
@@ -272,6 +269,7 @@ MessageBox (Enhanced)
 │  2. dispatchIncomingEvent                │
 │     (aiResponse, aiResponseTranslation)  │
 │  3. Add to conversationHistory           │
+│     (in original language)               │
 └──────┬───────────────────────────────────┘
        │
        ↓
@@ -541,39 +539,35 @@ POST /api/conversation
 │     └─ conversationHistory valid?                │
 │                                                  │
 │  2. ┌─────────────────────────────────────┐     │
-│     │  DeepL Translation (Step 1)         │     │
-│     │  Input: userMessage, targetLanguage │     │
-│     │  Output: userMessageTranslation     │     │
-│     │         detectedSourceLanguage      │     │
-│     └─────────────────────────────────────┘     │
-│                     ↓                            │
-│  3. ┌─────────────────────────────────────┐     │
-│     │  OpenAI Conversation (Step 2)       │     │
+│     │  OpenAI Conversation (Step 1)       │     │
 │     │  Model: gpt-3.5-turbo               │     │
 │     │  Messages:                           │     │
 │     │    - System: language learning prompt│    │
-│     │    - History: last 10 messages       │     │
-│     │    - User: userMessageTranslation    │     │
-│     │  Output: assistantResponse          │     │
+│     │    - History: last 10 (original lang)│     │
+│     │    - User: userMessage (original)    │     │
+│     │  Output: assistantResponseOriginal  │     │
 │     └─────────────────────────────────────┘     │
 │                     ↓                            │
-│  4. ┌─────────────────────────────────────┐     │
-│     │  DeepL Back-Translation (Step 3)    │     │
-│     │  Input: assistantResponse            │     │
-│     │         targetLanguage → source      │     │
-│     │  Output: assistantResponseTranslation│    │
+│  3. ┌─────────────────────────────────────┐     │
+│     │  DeepL Batch Translation (Step 2)   │     │
+│     │  Input: Combined text with delimiter│     │
+│     │    userMsg + "|||DELIMITER|||" +    │     │
+│     │    assistantResponseOriginal        │     │
+│     │  Target: targetLanguage             │     │
+│     │  Output: userMessageTranslation +   │     │
+│     │          assistantResponse          │     │
 │     └─────────────────────────────────────┘     │
 │                     ↓                            │
-│  5. Return Complete Response                     │
+│  4. Return Complete Response                     │
 │     {                                            │
 │       userMessageTranslation,                    │
-│       assistantResponse,                         │
-│       assistantResponseTranslation,              │
+│       assistantResponse (target language),       │
+│       assistantResponseTranslation (original),   │
 │       detectedSourceLanguage                     │
 │     }                                            │
 │                                                  │
 │  Error Handling:                                 │
-│  ├─ OpenAI fails → Fallback to simple response  │
+│  ├─ OpenAI fails → Fallback to translation only │
 │  ├─ DeepL fails → Return error with message     │
 │  └─ Network error → 500 with user-friendly msg  │
 │                                                  │
@@ -963,18 +957,18 @@ type ConversationResponse = {
 │     Conversation API Call               │
 │                                         │
 │  Parallel possible?                     │
-│  ├─ Step 1: User translate    ← Must be first
-│  ├─ Step 2: AI generation     ← Depends on Step 1
-│  └─ Step 3: Response translate ← Depends on Step 2
+│  ├─ Step 1: AI generation     ← First
+│  └─ Step 2: Batch translate   ← Depends on Step 1
 │                                         │
 │  ⚠️ Sequential execution required       │
 │                                         │
 │  Timing breakdown (typical):            │
-│  ├─ DeepL translate:    300-500ms      │
 │  ├─ OpenAI completion:  1000-2000ms    │
-│  └─ DeepL back-translate: 300-500ms    │
+│  └─ DeepL batch translate: 400-600ms   │
 │  ─────────────────────────────────────  │
-│  Total:                 1.6-3.0 seconds │
+│  Total:                 1.4-2.6 seconds │
+│                                         │
+│  ✅ Faster than 3-step flow!            │
 │                                         │
 └─────────────────────────────────────────┘
 ```
@@ -986,7 +980,7 @@ User clicks Submit
       ↓
 [Loading: Disable input, show spinner]
       ↓
-API call in progress (1.6-3s)
+API call in progress (1.4-2.6s)
       ↓
 [Loading: Show "AI is typing..." message]
       ↓
