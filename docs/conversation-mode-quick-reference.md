@@ -63,10 +63,10 @@ Transform chattr from a translation tool into a conversational language learning
 - [x] Add to main page layout (next to LanguageSelector)
 
 ### Phase 3: Enhanced Message Display (2-3 hours)
-- [ ] Update `MessageBox` props for bilingual support
-- [ ] Add conditional rendering for translation
-- [ ] Style bilingual layout (main + divider + translation)
-- [ ] Update event system to carry translation data
+- [x] Update `MessageBox` props for bilingual support
+- [x] Add conditional rendering for translation
+- [x] Style bilingual layout (main + divider + translation)
+- [x] Update event system to carry translation data
 
 ### Phase 4: OpenAI Integration (2-3 hours)
 - [ ] Run `npm install openai`
