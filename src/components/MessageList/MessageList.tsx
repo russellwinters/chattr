@@ -3,6 +3,7 @@ import { FC } from "react";
 import MessageBox from "../MessageBox";
 import styles from "./MessageList.module.scss";
 import { useEffect, useState } from "react";
+import { useMode } from "@/hooks/useMode";
 
 type Props = {
   classNames?: string;
@@ -12,9 +13,11 @@ type Message = {
   content: string;
   timestamp: number;
   incoming: boolean;
+  translation?: string;
 };
 
 const MessageList: FC<Props> = ({ classNames }) => {
+  const { mode } = useMode();
   const [messages, setMessages] = useState<Message[]>([
     { content: "Message in Ensligh here.", timestamp: 1, incoming: false },
     {
@@ -51,6 +54,8 @@ const MessageList: FC<Props> = ({ classNames }) => {
             })}
             key={m.timestamp}
             incoming={m.incoming}
+            translation={m.translation}
+            showTranslation={mode === "conversation" && !!m.translation}
           >
             {m.content}
           </MessageBox>
