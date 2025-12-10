@@ -51,16 +51,16 @@ Transform chattr from a translation tool into a conversational language learning
 ## Implementation Checklist
 
 ### Phase 1: Mode Infrastructure (2-3 hours)
-- [ ] Create `/src/contexts/ModeContext.tsx`
-- [ ] Create `/src/hooks/useMode.ts`
-- [ ] Add `ModeProvider` to `/src/pages/_app.tsx`
-- [ ] Test localStorage persistence
+- [x] Create `/src/contexts/ModeContext.tsx`
+- [x] Create `/src/hooks/useMode.ts`
+- [x] Add `ModeProvider` to `/src/pages/_app.tsx`
+- [x] Test localStorage persistence
 
 ### Phase 2: Mode Selector UI (1-2 hours)
-- [ ] Create `/src/components/ModeSelector/` component
-- [ ] Add toggle/segmented control styling
-- [ ] Integrate with `useMode` hook
-- [ ] Add to main page layout (next to LanguageSelector)
+- [x] Create `/src/components/ModeSelector/` component
+- [x] Add toggle/segmented control styling
+- [x] Integrate with `useMode` hook
+- [x] Add to main page layout (next to LanguageSelector)
 
 ### Phase 3: Enhanced Message Display (2-3 hours)
 - [ ] Update `MessageBox` props for bilingual support
