@@ -19,7 +19,7 @@ type Message = {
 const MessageList: FC<Props> = ({ classNames }) => {
   const { mode } = useMode();
   const [messages, setMessages] = useState<Message[]>([
-    { content: "Message in Ensligh here.", timestamp: 1, incoming: false },
+    { content: "Message in English here.", timestamp: 1, incoming: false },
     {
       content: "And you'll get a spanish translation here.",
       timestamp: 2,
