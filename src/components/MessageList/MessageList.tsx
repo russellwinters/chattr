@@ -54,8 +54,7 @@ const MessageList: FC<Props> = ({ classNames }) => {
             })}
             key={m.timestamp}
             incoming={m.incoming}
-            translation={m.translation}
-            showTranslation={mode === "conversation" && !!m.translation}
+            translation={mode === "conversation" ? m.translation : undefined}
           >
             {m.content}
           </MessageBox>
