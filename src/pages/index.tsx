@@ -19,8 +19,10 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={customSyles.main}>
-        <ModeSelector />
-        <LanguageSelector  />
+        <section className={customSyles.selectors}>
+          <ModeSelector />
+          <LanguageSelector />
+        </section>
         <MessageList classNames={customSyles.messageList} />
         <ChatInput />
       </main>

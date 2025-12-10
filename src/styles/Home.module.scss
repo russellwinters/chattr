@@ -1,14 +1,40 @@
+@import '@/styles/variables';
+@import '@/styles/typography';
+
+$selector-height-mobile: 70px;
+$input-height-mobile: calc($selector-height-mobile * 2 + $spacing-md * 2);
+
 .main {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 56px 1fr 56px;
-
+  grid-template-rows: $input-height-mobile 1fr 56px;
+  gap: $spacing-md;
   align-items: center;
-  padding: 6rem;
+  padding: $spacing-xl $spacing-lg;
   min-height: 100vh;
   overflow: hidden;
+
+  .selectors {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: $spacing-md;
+  }
 
   .messageList {
     overflow: auto;
   }
+}
+
+@media (min-width: $breakpoint-tablet) {
+  .main {
+    margin: 0 auto;
+    max-width: $content-width-max;
+    grid-template-rows: 56px 1fr 56px;
+
+    .selectors {
+      flex-direction: row;
+    }
+  }
+
 }
