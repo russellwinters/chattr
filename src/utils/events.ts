@@ -1,8 +1,9 @@
-const dispatchIncomingEvent = (value: string) => {
+const dispatchIncomingEvent = (value: string, translation?: string) => {
   const detail = {
     content: value,
     timestamp: new Date().getTime(),
     incoming: true,
+    translation,
   };
 
   const event = new CustomEvent("messageIncoming", {
@@ -12,11 +13,12 @@ const dispatchIncomingEvent = (value: string) => {
   window.dispatchEvent(event);
 };
 
-const dispatchOutgoingEvent = (value: string) => {
+const dispatchOutgoingEvent = (value: string, translation?: string) => {
   const detail = {
     content: value,
     timestamp: new Date().getTime(),
     incoming: false,
+    translation,
   };
 
   const event = new CustomEvent("messageOutgoing", {

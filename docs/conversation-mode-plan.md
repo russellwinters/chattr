@@ -768,24 +768,24 @@ const handleConversation = async (value: string) => {
 ### Implementation Order (Recommended)
 
 1. **Phase 1: Mode Infrastructure** (2-3 hours)
-   - [ ] Create `ModeContext` with localStorage persistence
-   - [ ] Create `useMode` custom hook
-   - [ ] Add `ModeProvider` to `_app.tsx`
-   - [ ] Test mode state management
+   - [x] Create `ModeContext` with localStorage persistence
+   - [x] Create `useMode` custom hook
+   - [x] Add `ModeProvider` to `_app.tsx`
+   - [x] Test mode state management
 
 2. **Phase 2: Mode Selector UI** (1-2 hours)
-   - [ ] Create `ModeSelector` component with toggle UI
-   - [ ] Add SCSS styling (toggle switch or segmented control)
-   - [ ] Integrate with `useMode` hook
-   - [ ] Add to main page layout
-   - [ ] Test responsive behavior
+   - [x] Create `ModeSelector` component with toggle UI
+   - [x] Add SCSS styling (toggle switch or segmented control)
+   - [x] Integrate with `useMode` hook
+   - [x] Add to main page layout
+   - [x] Test responsive behavior
 
 3. **Phase 3: Enhanced Message Display** (2-3 hours)
-   - [ ] Update `MessageBox` component props for bilingual display
-   - [ ] Add conditional rendering for translation text
-   - [ ] Update SCSS for bilingual styling (divider, smaller text)
-   - [ ] Update event system to support translation metadata
-   - [ ] Test both mode displays
+   - [x] Update `MessageBox` component props for bilingual display
+   - [x] Add conditional rendering for translation text
+   - [x] Update SCSS for bilingual styling (divider, smaller text)
+   - [x] Update event system to support translation metadata
+   - [x] Test both mode displays
 
 4. **Phase 4: OpenAI Integration** (2-3 hours)
    - [ ] Add `openai` npm package
