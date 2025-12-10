@@ -16,7 +16,8 @@ const openai = new OpenAI({
 
 /**
  * Default model for conversation mode
- * GPT-3.5-turbo provides good quality at reasonable cost (~$0.002 per request)
+ * GPT-3.5-turbo provides good quality at reasonable cost
+ * Note: Check OpenAI pricing page for current rates
  */
 export const CONVERSATION_MODEL = "gpt-3.5-turbo";
 
