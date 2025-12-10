@@ -14,37 +14,21 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || "",
 });
 
-/**
- * Default model for conversation mode
- * GPT-3.5-turbo provides good quality at reasonable cost
- * Note: Check OpenAI pricing page for current rates
- */
+// Model selection: https://platform.openai.com/docs/models
+// Pricing: https://openai.com/api/pricing/
 export const CONVERSATION_MODEL = "gpt-3.5-turbo";
 
-/**
- * Maximum tokens for AI responses
- * Limits response length to keep costs reasonable and responses concise
- */
+// Token limits: https://platform.openai.com/docs/guides/rate-limits
 export const MAX_RESPONSE_TOKENS = 150;
 
-/**
- * Maximum number of conversation messages to include as context
- * Keeps token usage manageable and focuses on recent conversation
- */
+// Context window management: https://platform.openai.com/docs/guides/chat-completions
 export const MAX_CONVERSATION_HISTORY = 10;
 
-/**
- * System prompt for conversation mode
- * 
- * Instructs the AI to act as a language learning assistant
- * that provides natural, contextual responses in the user's language.
- * 
- * Key behaviors:
- * - Respond naturally and conversationally
- * - Keep responses concise (1-2 sentences)
- * - Be encouraging and supportive for language learners
- * - Stay on topic and contextual
- */
+// Temperature range (0-2): https://platform.openai.com/docs/api-reference/chat/create#chat-create-temperature
+// Lower values (0.0-0.5) = more focused and deterministic
+// Higher values (1.0-2.0) = more random and creative
+export const TEMPERATURE = 0.7;
+
 export const SYSTEM_PROMPT = `You are a friendly language learning assistant. Your role is to have natural conversations with users who are practicing a new language.
 
 Guidelines:
@@ -54,6 +38,11 @@ Guidelines:
 - Stay contextual to the conversation
 - Use appropriate vocabulary for language learners
 - Avoid overly complex grammar or idioms unless the user demonstrates advanced proficiency`;
+
+export type ConversationMessage = {
+  role: "user" | "assistant";
+  content: string;
+};
 
 /**
  * Generate a conversational AI response
@@ -76,7 +65,7 @@ Guidelines:
  */
 export async function generateConversationResponse(
   userMessage: string,
-  conversationHistory: Array<{ role: "user" | "assistant"; content: string }> = []
+  conversationHistory: ConversationMessage[] = []
 ): Promise<string> {
   // Validate API key
   if (!process.env.OPENAI_API_KEY) {
@@ -94,15 +83,13 @@ export async function generateConversationResponse(
       { role: "user", content: userMessage },
     ];
 
-    // Call OpenAI API
     const completion = await openai.chat.completions.create({
       model: CONVERSATION_MODEL,
       messages,
       max_tokens: MAX_RESPONSE_TOKENS,
-      temperature: 0.7, // Balanced between creativity and consistency
+      temperature: TEMPERATURE,
     });
 
-    // Extract and return the AI's response
     const response = completion.choices[0]?.message?.content;
 
     if (!response) {
