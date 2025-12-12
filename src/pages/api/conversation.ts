@@ -61,7 +61,7 @@ export default async function handler(
   }
 
   // Step 1: Generate AI response
-  const assistantResponse = await generateConversationResponse(
+  const conversationResponse = await generateConversationResponse(
     data.userMessage,
     conversationHistory
   ).catch((error) => {
@@ -69,14 +69,14 @@ export default async function handler(
     return null;
   });
 
-  if (!assistantResponse) {
+  if (!conversationResponse) {
     return handleTranslationFallback(data.userMessage, targetLanguage, res);
   }
 
   // Step 2: Batch translate both messages to target language
   const translationResult = await batchTranslate(
     data.userMessage,
-    assistantResponse,
+    conversationResponse,
     targetLanguage
   ).catch((error) => {
     console.error("Translation error:", error);
@@ -119,20 +119,28 @@ async function batchTranslate(
     targetLanguage
   );
 
-  const translatedParts = translationResult.text.split("\n|||DEEPL_DELIMITER|||\n");
+  const parsedTranslation = parseTranslation(translationResult.text);
+  const unexpectedParseResponse = parsedTranslation.length !== 2;
 
   // Handle edge case where delimiter might be translated
-  if (translatedParts.length !== 2) {
+  if (unexpectedParseResponse) {
     return translateSeparately(userMessage, assistantResponse, targetLanguage);
   }
 
-  const [userMessageTranslation, assistantResponseTranslation] = translatedParts;
+  const [userMessageTranslation, assistantResponseTranslation] = parsedTranslation;
 
   return {
     userMessageTranslation: userMessageTranslation.trim(),
     assistantResponse: assistantResponseTranslation.trim(),
     assistantResponseTranslation: assistantResponse.trim(),
   };
+}
+
+/**
+ * Parses the translated text by splitting on the delimiter
+ */
+function parseTranslation(translatedText: string): string[] {
+  return translatedText.split("\n|||DEEPL_DELIMITER|||\n");
 }
 
 /**
