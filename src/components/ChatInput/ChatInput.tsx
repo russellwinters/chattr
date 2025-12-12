@@ -76,11 +76,11 @@ const ChatInput: FC = () => {
 
       const data = await response.json().catch((err) => {
         console.error("Failed to parse conversation API response:", err);
+        setError("Received an invalid response from the server. Please try again.");
         return null;
       });
 
       if (!data) {
-        setError("Failed to process conversation response. Please try again.");
         return;
       }
 
@@ -116,7 +116,7 @@ const ChatInput: FC = () => {
   return (
     <section className={styles.container}>
       {error && (
-        <div className={styles.error} role="alert" aria-live="polite">
+        <div className={styles.error} role="alert" aria-live="assertive">
           {error}
         </div>
       )}

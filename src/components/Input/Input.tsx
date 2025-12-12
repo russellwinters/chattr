@@ -30,7 +30,7 @@ const Input: FC<Props> = ({
       placeholder={label}
       className={cx(styles.input, classNames)}
       disabled={disabled}
-      aria-label={ariaLabel || label}
+      {...(ariaLabel && { "aria-label": ariaLabel })}
     />
   );
 };
