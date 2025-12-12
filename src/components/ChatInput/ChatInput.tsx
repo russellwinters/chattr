@@ -58,7 +58,7 @@ const ChatInput: FC = () => {
     }
 
     const data = await response.json().catch((err) => {
-      console.log("The conversation API call failed");
+      console.log("Failed to parse conversation API response");
       return null;
     });
 
