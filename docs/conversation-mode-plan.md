@@ -788,18 +788,18 @@ const handleConversation = async (value: string) => {
    - [x] Test both mode displays
 
 4. **Phase 4: OpenAI Integration** (2-3 hours)
-   - [ ] Add `openai` npm package
-   - [ ] Create OpenAI client configuration (`/src/lib/openai.ts`)
-   - [ ] Implement conversation prompt engineering
-   - [ ] Add environment variable for `OPENAI_API_KEY`
-   - [ ] Test basic OpenAI completion
+   - [x] Add `openai` npm package
+   - [x] Create OpenAI client configuration (`/src/lib/openai.ts`)
+   - [x] Implement conversation prompt engineering
+   - [x] Add environment variable for `OPENAI_API_KEY`
+   - [x] Test basic OpenAI completion
 
 5. **Phase 5: Conversation API** (3-4 hours)
-   - [ ] Create `/api/conversation` endpoint
-   - [ ] Implement 2-step flow: AI response → batch translate
-   - [ ] Add conversation history support
-   - [ ] Add error handling and fallbacks
-   - [ ] Test with various languages and inputs
+   - [x] Create `/api/conversation` endpoint
+   - [x] Implement 2-step flow: AI response → batch translate
+   - [x] Add conversation history support
+   - [x] Add error handling and fallbacks
+   - [x] Test with various languages and inputs
 
 6. **Phase 6: ChatInput Enhancement** (1-2 hours)
    - [ ] Add mode-aware message handling

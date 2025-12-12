@@ -75,10 +75,10 @@ Transform chattr from a translation tool into a conversational language learning
 - [x] Add `OPENAI_API_KEY` to `.env.local`
 
 ### Phase 5: Conversation API (3-4 hours)
-- [ ] Create `/src/pages/api/conversation.ts`
-- [ ] Implement 2-step flow: AI response → batch translate
-- [ ] Add conversation history support (in original language)
-- [ ] Implement error handling and fallbacks
+- [x] Create `/src/pages/api/conversation.ts`
+- [x] Implement 2-step flow: AI response → batch translate
+- [x] Add conversation history support (in original language)
+- [x] Implement error handling and fallbacks
 
 ### Phase 6: ChatInput Enhancement (1-2 hours)
 - [ ] Add mode detection in submit handler
