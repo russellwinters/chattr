@@ -52,35 +52,29 @@ const ChatInput: FC = () => {
       }),
     });
 
-    try {
-      if (response.ok) {
-        const data = await response.json();
-        
-        // Dispatch user message with translation
-        dispatchOutgoingEvent(value, data.userMessageTranslation);
-        
-        // Dispatch AI response with translation
-        // data.assistantResponse = translated response (target language)
-        // data.assistantResponseTranslation = original response (source language)
-        dispatchIncomingEvent(data.assistantResponse, data.assistantResponseTranslation);
-        
-        // Update conversation history (keep last 10 messages)
-        // Store original language responses for proper AI context
-        setConversationHistory((prev) => {
-          const updated: ConversationMessage[] = [
-            ...prev,
-            { role: "user" as const, content: value },
-            { role: "assistant" as const, content: data.assistantResponseTranslation },
-          ];
-          // Keep only the last 10 messages
-          return updated.slice(-10);
-        });
-      } else {
-        console.log("There was an error with the conversation response");
-      }
-    } catch (err) {
-      console.log("The conversation API call failed");
+    if (!response.ok) {
+      console.log("There was an error with the conversation response");
+      return;
     }
+
+    const data = await response.json().catch((err) => {
+      console.log("The conversation API call failed");
+      return null;
+    });
+
+    if (!data) return;
+
+    dispatchOutgoingEvent(value, data.userMessageTranslation);
+    dispatchIncomingEvent(data.assistantResponse, data.assistantResponseTranslation);
+
+    setConversationHistory((prev) => {
+      const updated: ConversationMessage[] = [
+        ...prev,
+        { role: "user" as const, content: value },
+        { role: "assistant" as const, content: data.assistantResponseTranslation },
+      ];
+      return updated.slice(-10);
+    });
   };
 
   const handleSubmit = async (value: string) => {
