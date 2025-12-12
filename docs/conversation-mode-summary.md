@@ -604,19 +604,21 @@ The planning follows the same thorough approach as the language selector feature
 - Event system enhanced to support translation data
 - MessageList component updated to be mode-aware
 
+✅ **Phase 4: OpenAI Integration** (Completed)
+- OpenAI package installed (openai ^6.10.0)
+- Created `/src/lib/openai.ts` with client config and helper functions
+- Implemented prompt engineering for language learning conversations
+- Added `OPENAI_API_KEY` to `.env.example`
+
+✅ **Phase 5: Conversation API** (Completed)
+- Created `/src/pages/api/conversation.ts` endpoint
+- Implemented 2-step flow: AI response → batch translate
+- Added conversation history support (last 10 messages)
+- Implemented comprehensive error handling and fallbacks (degrades to translation-only)
+- Validates language codes and request parameters
+- Uses delimiter strategy for efficient batch translation
+
 ### Remaining Phases
-
-⏳ **Phase 4: OpenAI Integration** (Pending)
-- Install OpenAI package
-- Create `/src/lib/openai.ts` with client config
-- Implement prompt engineering for conversations
-- Add `OPENAI_API_KEY` to `.env.local`
-
-⏳ **Phase 5: Conversation API** (Pending)
-- Create `/src/pages/api/conversation.ts`
-- Implement 2-step flow: AI response → batch translate
-- Add conversation history support
-- Implement error handling and fallbacks
 
 ⏳ **Phase 6: ChatInput Enhancement** (Pending)
 - Add mode detection in submit handler
@@ -635,4 +637,4 @@ The planning follows the same thorough approach as the language selector feature
 - Document OpenAI setup process
 - Add usage examples
 
-**Progress**: 3 of 8 phases complete (37.5%)
+**Progress**: 5 of 8 phases complete (62.5%)

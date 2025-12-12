@@ -99,9 +99,10 @@ src/
 │   └── openai.ts         # OpenAI client configuration
 ├── pages/
 │   ├── api/
-│   │   └── translate.ts  # DeepL translation endpoint
-│   ├── _app.tsx          # App wrapper with providers
-│   └── index.tsx         # Main chat page
+│   │   ├── conversation.ts # Conversation API with AI + translation
+│   │   └── translate.ts    # DeepL translation endpoint
+│   ├── _app.tsx            # App wrapper with providers
+│   └── index.tsx           # Main chat page
 └── utils/
     ├── events.ts         # Custom event system for messages
     └── languages.ts      # Language codes and utilities
@@ -115,12 +116,14 @@ src/
 - [x] Mode selector UI (toggle between Translation and Conversation)
 - [x] Enhanced message display (bilingual support)
 - [x] OpenAI integration setup
+- [x] Conversation API endpoint (`/api/conversation`)
+- [x] AI response generation with context (last 10 messages)
+- [x] Batch translation for efficient API usage
+- [x] Error handling with fallback to translation-only mode
 
 ### In Progress 🚧
-- [ ] Conversation API endpoint (`/api/conversation`)
 - [ ] ChatInput mode-aware routing
-- [ ] Conversation history tracking
-- [ ] AI response generation with context
+- [ ] Conversation history tracking in component state
 
 ### Future Roadmap 📋
 - [ ] Conversation history persistence (localStorage)
