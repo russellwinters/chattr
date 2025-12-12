@@ -69,10 +69,10 @@ Transform chattr from a translation tool into a conversational language learning
 - [x] Update event system to carry translation data
 
 ### Phase 4: OpenAI Integration (2-3 hours)
-- [ ] Run `npm install openai`
-- [ ] Create `/src/lib/openai.ts` with client config
-- [ ] Implement prompt engineering for conversations
-- [ ] Add `OPENAI_API_KEY` to `.env.local`
+- [x] Run `npm install openai`
+- [x] Create `/src/lib/openai.ts` with client config
+- [x] Implement prompt engineering for conversations
+- [x] Add `OPENAI_API_KEY` to `.env.local`
 
 ### Phase 5: Conversation API (3-4 hours)
 - [ ] Create `/src/pages/api/conversation.ts`
