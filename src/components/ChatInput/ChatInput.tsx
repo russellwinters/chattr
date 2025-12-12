@@ -60,9 +60,12 @@ const ChatInput: FC = () => {
         dispatchOutgoingEvent(value, data.userMessageTranslation);
         
         // Dispatch AI response with translation
+        // data.assistantResponse = translated response (target language)
+        // data.assistantResponseTranslation = original response (source language)
         dispatchIncomingEvent(data.assistantResponse, data.assistantResponseTranslation);
         
         // Update conversation history (keep last 10 messages)
+        // Store original language responses for proper AI context
         setConversationHistory((prev) => {
           const updated: ConversationMessage[] = [
             ...prev,
