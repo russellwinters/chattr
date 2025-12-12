@@ -45,116 +45,114 @@ export default async function handler(
   }
 
   const data = req.body as ConversationRequestBody;
-
-  // Validate required fields
-  if (!data.userMessage) {
-    res.status(400).json({ message: "userMessage is required" });
-    return;
-  }
-
-  if (!data.targetLanguage) {
-    res.status(400).json({ message: "targetLanguage is required" });
-    return;
-  }
-
-  // Validate target language
-  if (!VALID_LANGUAGE_CODES.has(data.targetLanguage)) {
-    res.status(400).json({
-      message: `Invalid target language: ${data.targetLanguage}. Please provide a valid language code.`,
-    });
+  const validationError = validateRequest(data);
+  if (validationError) {
+    res.status(400).json({ message: validationError });
     return;
   }
 
   const targetLanguage = data.targetLanguage as TargetLanguageCode;
   const conversationHistory = data.conversationHistory || [];
 
-  try {
-    // Check if OpenAI is configured
-    if (!isOpenAIConfigured()) {
-      // Fallback: Translation-only mode
-      console.warn(
-        "OpenAI not configured, falling back to translation-only mode"
-      );
-      return handleTranslationFallback(
-        data.userMessage,
-        targetLanguage,
-        res
-      );
-    }
-
-    // Step 1: Generate AI response in original language
-    let assistantResponseOriginal: string;
-    try {
-      assistantResponseOriginal = await generateConversationResponse(
-        data.userMessage,
-        conversationHistory
-      );
-    } catch (error) {
-      // If OpenAI fails, fallback to translation-only
-      console.error("OpenAI API error, falling back to translation:", error);
-      return handleTranslationFallback(
-        data.userMessage,
-        targetLanguage,
-        res
-      );
-    }
-
-    // Step 2: Batch translate both messages to target language
-    // Using a delimiter that's unlikely to appear in natural text
-    const combinedText = `${data.userMessage}\n|||DEEPL_DELIMITER|||\n${assistantResponseOriginal}`;
-
-    try {
-      const translationResult = await translator.translateText(
-        combinedText,
-        null,
-        targetLanguage
-      );
-
-      const translatedParts = translationResult.text.split(
-        "\n|||DEEPL_DELIMITER|||\n"
-      );
-
-      // Handle edge case where delimiter might be translated
-      if (translatedParts.length !== 2) {
-        // Fallback: translate separately
-        const userTranslation = await translator.translateText(
-          data.userMessage,
-          null,
-          targetLanguage
-        );
-        const assistantTranslation = await translator.translateText(
-          assistantResponseOriginal,
-          null,
-          targetLanguage
-        );
-
-        res.status(200).json({
-          userMessageTranslation: userTranslation.text.trim(),
-          assistantResponse: assistantTranslation.text.trim(),
-          assistantResponseTranslation: assistantResponseOriginal.trim(),
-        });
-        return;
-      }
-
-      const [userMessageTranslation, assistantResponse] = translatedParts;
-
-      res.status(200).json({
-        userMessageTranslation: userMessageTranslation.trim(),
-        assistantResponse: assistantResponse.trim(),
-        assistantResponseTranslation: assistantResponseOriginal.trim(),
-      });
-    } catch (error) {
-      console.error("DeepL translation error:", error);
-      res.status(500).json({
-        message: "Translation failed. Please try again.",
-      });
-    }
-  } catch (error) {
-    console.error("Conversation API error:", error);
-    res.status(500).json({
-      message: "Failed to process conversation. Please try again.",
-    });
+  // Check if OpenAI is configured
+  if (!isOpenAIConfigured()) {
+    console.warn("OpenAI not configured, falling back to translation-only mode");
+    return handleTranslationFallback(data.userMessage, targetLanguage, res);
   }
+
+  // Step 1: Generate AI response
+  const assistantResponse = await generateConversationResponse(
+    data.userMessage,
+    conversationHistory
+  ).catch((error) => {
+    console.error("OpenAI API error, falling back to translation:", error);
+    return null;
+  });
+
+  if (!assistantResponse) {
+    return handleTranslationFallback(data.userMessage, targetLanguage, res);
+  }
+
+  // Step 2: Batch translate both messages to target language
+  const translationResult = await batchTranslate(
+    data.userMessage,
+    assistantResponse,
+    targetLanguage
+  ).catch((error) => {
+    console.error("Translation error:", error);
+    return null;
+  });
+
+  if (!translationResult) {
+    res.status(500).json({ message: "Translation failed. Please try again." });
+    return;
+  }
+
+  res.status(200).json(translationResult);
+}
+
+/**
+ * Validates the request body
+ */
+function validateRequest(data: ConversationRequestBody): string | null {
+  if (!data.userMessage) return "userMessage is required";
+  if (!data.targetLanguage) return "targetLanguage is required";
+  if (!VALID_LANGUAGE_CODES.has(data.targetLanguage)) {
+    return `Invalid target language: ${data.targetLanguage}. Please provide a valid language code.`;
+  }
+  return null;
+}
+
+/**
+ * Batch translates user message and assistant response using a delimiter strategy
+ * Falls back to separate translations if delimiter is modified
+ */
+async function batchTranslate(
+  userMessage: string,
+  assistantResponse: string,
+  targetLanguage: TargetLanguageCode
+): Promise<ConversationSuccessResponse> {
+  const combinedText = `${userMessage}\n|||DEEPL_DELIMITER|||\n${assistantResponse}`;
+  const translationResult = await translator.translateText(
+    combinedText,
+    null,
+    targetLanguage
+  );
+
+  const translatedParts = translationResult.text.split("\n|||DEEPL_DELIMITER|||\n");
+
+  // Handle edge case where delimiter might be translated
+  if (translatedParts.length !== 2) {
+    return translateSeparately(userMessage, assistantResponse, targetLanguage);
+  }
+
+  const [userMessageTranslation, assistantResponseTranslation] = translatedParts;
+
+  return {
+    userMessageTranslation: userMessageTranslation.trim(),
+    assistantResponse: assistantResponseTranslation.trim(),
+    assistantResponseTranslation: assistantResponse.trim(),
+  };
+}
+
+/**
+ * Translates user message and assistant response separately
+ */
+async function translateSeparately(
+  userMessage: string,
+  assistantResponse: string,
+  targetLanguage: TargetLanguageCode
+): Promise<ConversationSuccessResponse> {
+  const [userTranslation, assistantTranslation] = await Promise.all([
+    translator.translateText(userMessage, null, targetLanguage),
+    translator.translateText(assistantResponse, null, targetLanguage),
+  ]);
+
+  return {
+    userMessageTranslation: userTranslation.text.trim(),
+    assistantResponse: assistantTranslation.text.trim(),
+    assistantResponseTranslation: assistantResponse.trim(),
+  };
 }
 
 /**
@@ -166,26 +164,28 @@ async function handleTranslationFallback(
   targetLanguage: TargetLanguageCode,
   res: NextApiResponse<ConversationSuccessResponse | ErrorResponse>
 ) {
-  try {
-    const result = await translator.translateText(
-      userMessage,
-      null,
-      targetLanguage
-    );
-
-    // Return translation with a generic assistant response
-    res.status(200).json({
-      userMessageTranslation: result.text,
-      assistantResponse: result.text,
-      assistantResponseTranslation:
-        "I'm unable to generate a conversation response right now. Here's the translation of your message.",
-      fallback: true,
-    } as ConversationSuccessResponse & { fallback: boolean });
-  } catch (error) {
+  const result = await translator.translateText(
+    userMessage,
+    null,
+    targetLanguage
+  ).catch((error) => {
     console.error("Translation fallback error:", error);
+    return null;
+  });
+
+  if (!result) {
     res.status(500).json({
       message: "Translation failed. Please try again.",
       fallback: true,
     });
+    return;
   }
+
+  res.status(200).json({
+    userMessageTranslation: result.text,
+    assistantResponse: result.text,
+    assistantResponseTranslation:
+      "I'm unable to generate a conversation response right now. Here's the translation of your message.",
+    fallback: true,
+  } as ConversationSuccessResponse & { fallback: boolean });
 }
