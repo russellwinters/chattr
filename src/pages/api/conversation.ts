@@ -54,13 +54,11 @@ export default async function handler(
   const targetLanguage = data.targetLanguage as TargetLanguageCode;
   const conversationHistory = data.conversationHistory || [];
 
-  // Check if OpenAI is configured
   if (!isOpenAIConfigured()) {
     console.warn("OpenAI not configured, falling back to translation-only mode");
     return handleTranslationFallback(data.userMessage, targetLanguage, res);
   }
 
-  // Step 1: Generate AI response
   const conversationResponse = await generateConversationResponse(
     data.userMessage,
     conversationHistory
@@ -73,7 +71,6 @@ export default async function handler(
     return handleTranslationFallback(data.userMessage, targetLanguage, res);
   }
 
-  // Step 2: Batch translate both messages to target language
   const translationResult = await batchTranslate(
     data.userMessage,
     conversationResponse,
@@ -91,9 +88,7 @@ export default async function handler(
   res.status(200).json(translationResult);
 }
 
-/**
- * Validates the request body
- */
+
 function validateRequest(data: ConversationRequestBody): string | null {
   if (!data.userMessage) return "userMessage is required";
   if (!data.targetLanguage) return "targetLanguage is required";
@@ -103,10 +98,6 @@ function validateRequest(data: ConversationRequestBody): string | null {
   return null;
 }
 
-/**
- * Batch translates user message and assistant response using a delimiter strategy
- * Falls back to separate translations if delimiter is modified
- */
 async function batchTranslate(
   userMessage: string,
   assistantResponse: string,
@@ -122,7 +113,6 @@ async function batchTranslate(
   const parsedTranslation = parseTranslation(translationResult.text);
   const unexpectedParseResponse = parsedTranslation.length !== 2;
 
-  // Handle edge case where delimiter might be translated
   if (unexpectedParseResponse) {
     return translateSeparately(userMessage, assistantResponse, targetLanguage);
   }
@@ -136,16 +126,10 @@ async function batchTranslate(
   };
 }
 
-/**
- * Parses the translated text by splitting on the delimiter
- */
 function parseTranslation(translatedText: string): string[] {
   return translatedText.split("\n|||DEEPL_DELIMITER|||\n");
 }
 
-/**
- * Translates user message and assistant response separately
- */
 async function translateSeparately(
   userMessage: string,
   assistantResponse: string,
@@ -163,10 +147,6 @@ async function translateSeparately(
   };
 }
 
-/**
- * Fallback handler when OpenAI is unavailable
- * Returns a simple translation of the user's message
- */
 async function handleTranslationFallback(
   userMessage: string,
   targetLanguage: TargetLanguageCode,
