@@ -22,12 +22,16 @@ const MessageBox: FC<Props> = ({
         [styles.outgoing]: !incoming,
         [styles.bilingual]: translation,
       })}
+      role="article"
+      aria-label={incoming ? "Incoming message" : "Outgoing message"}
     >
       <div className={styles.mainText}>{children}</div>
       {translation && (
         <>
-          <div className={styles.divider} />
-          <div className={styles.translation}>{translation}</div>
+          <div className={styles.divider} aria-hidden="true" />
+          <div className={styles.translation} aria-label="Translation">
+            {translation}
+          </div>
         </>
       )}
     </span>

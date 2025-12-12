@@ -8,6 +8,8 @@ type Props = {
   onChange: ChangeEventHandler<HTMLInputElement>;
   onKeyDown?: KeyboardEventHandler<HTMLInputElement>;
   classNames?: string;
+  disabled?: boolean;
+  "aria-label"?: string;
 };
 
 const Input: FC<Props> = ({
@@ -16,6 +18,8 @@ const Input: FC<Props> = ({
   onChange,
   onKeyDown,
   classNames,
+  disabled = false,
+  "aria-label": ariaLabel,
 }) => {
   return (
     <input
@@ -25,6 +29,8 @@ const Input: FC<Props> = ({
       type="text"
       placeholder={label}
       className={cx(styles.input, classNames)}
+      disabled={disabled}
+      aria-label={ariaLabel || label}
     />
   );
 };
