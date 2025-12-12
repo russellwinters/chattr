@@ -81,10 +81,10 @@ Transform chattr from a translation tool into a conversational language learning
 - [x] Implement error handling and fallbacks
 
 ### Phase 6: ChatInput Enhancement (1-2 hours)
-- [ ] Add mode detection in submit handler
-- [ ] Route to appropriate API based on mode
-- [ ] Track conversation history (last 10 messages)
-- [ ] Dispatch bilingual events in conversation mode
+- [x] Add mode detection in submit handler
+- [x] Route to appropriate API based on mode
+- [x] Track conversation history (last 10 messages)
+- [x] Dispatch bilingual events in conversation mode
 
 ### Phase 7: Polish & Testing (2-3 hours)
 - [ ] Add loading states ("AI is typing...")

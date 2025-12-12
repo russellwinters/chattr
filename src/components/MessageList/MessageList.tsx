@@ -16,16 +16,18 @@ type Message = {
   translation?: string;
 };
 
+const MESSAGES_DEFAULT: Message[] = [
+  { content: "Message in English here.", timestamp: 1, incoming: false },
+  {
+    content: `And you'll get a response here.`,
+    timestamp: 2,
+    incoming: true,
+  },
+];
+
 const MessageList: FC<Props> = ({ classNames }) => {
   const { mode } = useMode();
-  const [messages, setMessages] = useState<Message[]>([
-    { content: "Message in English here.", timestamp: 1, incoming: false },
-    {
-      content: "And you'll get a spanish translation here.",
-      timestamp: 2,
-      incoming: true,
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>(MESSAGES_DEFAULT);
 
   useEffect(() => {
     const messageReceiver = (e: any) => {
@@ -42,6 +44,10 @@ const MessageList: FC<Props> = ({ classNames }) => {
       window.removeEventListener("messageOutgoing", messageReceiver);
     };
   }, []);
+
+  useEffect(() => {
+    setMessages(MESSAGES_DEFAULT);
+  }, [mode])
 
   return (
     <section className={cx(styles.messageList, classNames)}>

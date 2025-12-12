@@ -8,8 +8,7 @@ import OpenAI from "openai";
  * to the target language via the DeepL API.
  */
 
-// Initialize OpenAI client with API key from environment
-// If no key is provided, the client will still be created but API calls will fail
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || "",
 });
@@ -29,10 +28,10 @@ export const MAX_CONVERSATION_HISTORY = 10;
 // Higher values (1.0-2.0) = more random and creative
 export const TEMPERATURE = 0.7;
 
-export const SYSTEM_PROMPT = `You are a friendly language learning assistant. Your role is to have natural conversations with users who are practicing a new language.
+export const SYSTEM_PROMPT = `You are a friendly conversation assistant. Your role is to have natural conversations with users who are practicing a new language.
 
 Guidelines:
-- Respond naturally in the user's language (the language they write in)
+- Respond in English
 - Keep your responses concise and conversational (1-2 sentences)
 - Be encouraging and supportive
 - Stay contextual to the conversation
@@ -67,7 +66,6 @@ export async function generateConversationResponse(
   userMessage: string,
   conversationHistory: ConversationMessage[] = []
 ): Promise<string> {
-  // Validate API key
   if (!process.env.OPENAI_API_KEY) {
     throw new Error(
       "OpenAI API key is not configured. Please set OPENAI_API_KEY in your environment."
@@ -75,10 +73,8 @@ export async function generateConversationResponse(
   }
 
   try {
-    // Prepare messages array with system prompt and conversation history
     const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
       { role: "system", content: SYSTEM_PROMPT },
-      // Include up to MAX_CONVERSATION_HISTORY recent messages for context
       ...conversationHistory.slice(-MAX_CONVERSATION_HISTORY),
       { role: "user", content: userMessage },
     ];
@@ -98,7 +94,6 @@ export async function generateConversationResponse(
 
     return response.trim();
   } catch (error) {
-    // Re-throw with more context
     if (error instanceof Error) {
       throw new Error(`OpenAI API error: ${error.message}`);
     }
@@ -106,11 +101,7 @@ export async function generateConversationResponse(
   }
 }
 
-/**
- * Check if OpenAI is properly configured
- * 
- * @returns true if API key is set, false otherwise
- */
+
 export function isOpenAIConfigured(): boolean {
   return Boolean(process.env.OPENAI_API_KEY);
 }

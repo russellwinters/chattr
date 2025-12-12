@@ -10,11 +10,12 @@ A real-time translation and conversation application that helps you learn langua
 - Support for 31 languages
 - Message history with incoming/outgoing message display
 
-### Conversation Mode (In Development)
+### Conversation Mode
 - AI-powered conversational responses using OpenAI GPT-3.5-turbo
 - Bilingual message display (original language + translation)
 - Context-aware responses for natural conversations
 - Language learning focused interactions
+- Conversation history tracking (last 10 messages for context)
 
 ### General Features
 - Mode selector to switch between translation and conversation modes
@@ -58,14 +59,14 @@ A real-time translation and conversation application that helps you learn langua
 2. Type your text in the input field and press Enter or click Submit
 3. The app will display your message and return a translation in your selected language
 
-### Conversation Mode (In Development)
+### Conversation Mode
 1. Toggle to "Conversation" mode using the mode selector
 2. Select your target language from the language selector
 3. Type your message in any language and press Enter or click Submit
 4. The AI will respond conversationally, with both the original and translated versions displayed
-5. The conversation maintains context for natural, flowing dialogue
+5. The conversation maintains context for natural, flowing dialogue (tracks last 10 messages)
 
-**Note**: Conversation mode requires an OpenAI API key to be configured.
+**Note**: Conversation mode requires an OpenAI API key to be configured. If OpenAI is not available, the system will fall back to translation-only mode.
 
 ## Tech Stack
 
@@ -120,10 +121,8 @@ src/
 - [x] AI response generation with context (last 10 messages)
 - [x] Batch translation for efficient API usage
 - [x] Error handling with fallback to translation-only mode
-
-### In Progress 🚧
-- [ ] ChatInput mode-aware routing
-- [ ] Conversation history tracking in component state
+- [x] ChatInput mode-aware routing
+- [x] Conversation history tracking in component state
 
 ### Future Roadmap 📋
 - [ ] Conversation history persistence (localStorage)
