@@ -65,8 +65,36 @@ A real-time translation and conversation application that helps you learn langua
 3. Type your message in any language and press Enter or click Submit
 4. The AI will respond conversationally, with both the original and translated versions displayed
 5. The conversation maintains context for natural, flowing dialogue (tracks last 10 messages)
+6. You'll see "AI is typing..." while waiting for responses
 
 **Note**: Conversation mode requires an OpenAI API key to be configured. If OpenAI is not available, the system will fall back to translation-only mode.
+
+### Example Conversation Flow
+
+Here's how a typical conversation might look when learning Spanish:
+
+**You (in English)**: "Hello, I'm learning Spanish. Can you help me practice?"
+- _Translation shown in Spanish_: "Hola, estoy aprendiendo español. ¿Puedes ayudarme a practicar?"
+
+**AI Response (in English)**: "¡Hola! Of course, I'd be happy to help you practice Spanish. What would you like to talk about?"
+- _Translation shown in Spanish_: "¡Hola! Por supuesto, estaré encantado de ayudarte a practicar español. ¿De qué te gustaría hablar?"
+
+The AI maintains context throughout the conversation, so you can ask follow-up questions naturally. Each message displays in both the original language and your selected target language to help you learn.
+
+### Keyboard Navigation
+- **Tab**: Navigate between interactive elements (mode selector, language selector, input field, submit button)
+- **Enter**: Submit your message from the input field
+- **Space**: Toggle mode selector buttons when focused
+- **Arrow keys**: Navigate through language selector options when the dropdown is open
+
+### Accessibility Features
+- Full keyboard navigation support
+- Screen reader compatible with ARIA labels and live regions
+- High contrast color schemes for better readability
+- Focus indicators on all interactive elements
+- Semantic HTML structure
+- Error messages announced to screen readers
+- Loading states announced for better context
 
 ## Tech Stack
 
@@ -138,3 +166,48 @@ src/
 - `npm run build` - Build for production
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint
+
+## Troubleshooting
+
+### Common Issues
+
+**"Translation failed" error message**
+- Verify your `DEEPL_API_KEY` is correctly set in `.env.local`
+- Check that your DeepL API key has remaining quota
+- Ensure you have a stable internet connection
+
+**"Conversation failed" error message in Conversation Mode**
+- Verify your `OPENAI_API_KEY` is correctly set in `.env.local`
+- Check that your OpenAI API key is valid and has remaining quota
+- The app will automatically fall back to translation-only mode if OpenAI is unavailable
+
+**Mode or language preference not persisting**
+- Check that localStorage is enabled in your browser
+- Clear browser cache and try again
+- Some browsers in private/incognito mode may block localStorage
+
+**Messages not appearing**
+- Check browser console for JavaScript errors
+- Ensure you've selected a target language
+- Try refreshing the page
+
+**Slow responses in Conversation Mode**
+- This is normal - AI responses can take 2-5 seconds
+- You'll see "AI is typing..." while waiting
+- Check your internet connection if it takes longer than 10 seconds
+
+### API Key Setup
+
+Make sure your `.env.local` file is in the root directory (not in `src/`) and contains:
+
+```
+DEEPL_API_KEY=your_actual_deepl_key_here
+OPENAI_API_KEY=your_actual_openai_key_here
+```
+
+After adding or changing API keys, restart the development server:
+```bash
+# Stop the server (Ctrl+C)
+# Then restart
+npm run dev
+```

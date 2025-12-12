@@ -12,69 +12,96 @@ const ChatInput: FC = () => {
   const { targetLanguage } = useLanguage();
   const { mode } = useMode();
   const [conversationHistory, setConversationHistory] = useState<ConversationMessage[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleTranslation = async (value: string) => {
-    const response = await fetch("/api/translate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        text: value,
-        targetLanguage,
-      }),
-    });
+    setError(null);
+    setIsLoading(true);
 
     try {
+      const response = await fetch("/api/translate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          text: value,
+          targetLanguage,
+        }),
+      });
+
       if (response.ok) {
         const data = await response.json();
         if (data?.result?.text) {
           dispatchIncomingEvent(data.result.text);
+        } else {
+          setError("Translation failed. Please try again.");
         }
       } else {
-        console.log("There was an error with the response type");
+        setError("Translation failed. Please check your connection and try again.");
       }
     } catch (err) {
-      console.log("The API call failed");
+      setError("Unable to connect to translation service. Please try again.");
+      console.error("Translation error:", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleConversation = async (value: string) => {
-    const response = await fetch("/api/conversation", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        userMessage: value,
-        targetLanguage,
-        conversationHistory,
-      }),
-    });
+    setError(null);
+    setIsLoading(true);
 
-    if (!response.ok) {
-      console.log("There was an error with the conversation response");
-      return;
+    // Dispatch loading indicator
+    window.dispatchEvent(new CustomEvent("conversationLoading", { detail: { isLoading: true } }));
+
+    try {
+      const response = await fetch("/api/conversation", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userMessage: value,
+          targetLanguage,
+          conversationHistory,
+        }),
+      });
+
+      if (!response.ok) {
+        setError("Conversation failed. Please check your connection and try again.");
+        return;
+      }
+
+      const data = await response.json().catch((err) => {
+        console.error("Failed to parse conversation API response:", err);
+        setError("Received an invalid response from the server. Please try again.");
+        return null;
+      });
+
+      if (!data) {
+        return;
+      }
+
+      dispatchOutgoingEvent(value, data.userMessageTranslation);
+      dispatchIncomingEvent(data.assistantResponse, data.assistantResponseTranslation);
+
+      setConversationHistory((prev) => {
+        const updated: ConversationMessage[] = [
+          ...prev,
+          { role: "user" as const, content: value },
+          { role: "assistant" as const, content: data.assistantResponseTranslation },
+        ];
+        return updated.slice(-10);
+      });
+    } catch (err) {
+      setError("Unable to connect to conversation service. Please try again.");
+      console.error("Conversation error:", err);
+    } finally {
+      setIsLoading(false);
+      window.dispatchEvent(new CustomEvent("conversationLoading", { detail: { isLoading: false } }));
     }
-
-    const data = await response.json().catch((err) => {
-      console.log("Failed to parse conversation API response");
-      return null;
-    });
-
-    if (!data) return;
-
-    dispatchOutgoingEvent(value, data.userMessageTranslation);
-    dispatchIncomingEvent(data.assistantResponse, data.assistantResponseTranslation);
-
-    setConversationHistory((prev) => {
-      const updated: ConversationMessage[] = [
-        ...prev,
-        { role: "user" as const, content: value },
-        { role: "assistant" as const, content: data.assistantResponseTranslation },
-      ];
-      return updated.slice(-10);
-    });
   };
 
   const handleSubmit = async (value: string) => {
@@ -88,34 +115,45 @@ const ChatInput: FC = () => {
 
   return (
     <section className={styles.container}>
-      <Input
-        value={value}
-        label="Type here"
-        onChange={(e) => {
-          if (typeof e.target.value === "string") {
-            setValue(e.target.value);
-          }
-        }}
-        onKeyDown={(e) => {
-          if (e?.key === "Enter" && value) {
-            e.preventDefault();
-            handleSubmit(value);
-            setValue(undefined);
-          }
-        }}
-        classNames={styles.input}
-      />
-      <Button
-        onClick={() => {
-          if (typeof value === "string") {
-            handleSubmit(value);
-            setValue(undefined);
-          }
-        }}
-        classNames={styles.button}
-      >
-        Submit
-      </Button>
+      {error && (
+        <div className={styles.error} role="alert" aria-live="assertive">
+          {error}
+        </div>
+      )}
+      <div>
+        <Input
+          value={value}
+          label={isLoading ? "Processing..." : "Type here"}
+          onChange={(e) => {
+            if (typeof e.target.value === "string") {
+              setValue(e.target.value);
+            }
+          }}
+          onKeyDown={(e) => {
+            if (e?.key === "Enter" && value && !isLoading) {
+              e.preventDefault();
+              handleSubmit(value);
+              setValue(undefined);
+            }
+          }}
+          classNames={styles.input}
+          disabled={isLoading}
+          aria-label="Message input"
+        />
+        <Button
+          onClick={() => {
+            if (typeof value === "string" && !isLoading) {
+              handleSubmit(value);
+              setValue(undefined);
+            }
+          }}
+          classNames={styles.button}
+          disabled={isLoading}
+          aria-label="Submit message"
+        >
+          {isLoading ? "Sending..." : "Submit"}
+        </Button>
+      </div>
     </section>
   );
 };

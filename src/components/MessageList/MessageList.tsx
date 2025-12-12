@@ -28,6 +28,7 @@ const MESSAGES_DEFAULT: Message[] = [
 const MessageList: FC<Props> = ({ classNames }) => {
   const { mode } = useMode();
   const [messages, setMessages] = useState<Message[]>(MESSAGES_DEFAULT);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const messageReceiver = (e: any) => {
@@ -36,12 +37,20 @@ const MessageList: FC<Props> = ({ classNames }) => {
       }
     };
 
+    const loadingHandler = (e: any) => {
+      if (e.detail?.isLoading !== undefined) {
+        setIsLoading(e.detail.isLoading);
+      }
+    };
+
     window.addEventListener("messageIncoming", messageReceiver);
     window.addEventListener("messageOutgoing", messageReceiver);
+    window.addEventListener("conversationLoading", loadingHandler);
 
     return () => {
       window.removeEventListener("messageIncoming", messageReceiver);
       window.removeEventListener("messageOutgoing", messageReceiver);
+      window.removeEventListener("conversationLoading", loadingHandler);
     };
   }, []);
 
@@ -50,7 +59,7 @@ const MessageList: FC<Props> = ({ classNames }) => {
   }, [mode])
 
   return (
-    <section className={cx(styles.messageList, classNames)}>
+    <section className={cx(styles.messageList, classNames)} aria-live="polite" aria-label="Message history">
       {messages.map((m) => {
         return (
           <MessageBox
@@ -66,6 +75,16 @@ const MessageList: FC<Props> = ({ classNames }) => {
           </MessageBox>
         );
       })}
+      {isLoading && mode === "conversation" && (
+        <div className={cx(styles.message, styles.incoming, styles.loadingIndicator)}>
+          <span className={styles.loadingText}>AI is typing</span>
+          <span className={styles.loadingDots}>
+            <span>.</span>
+            <span>.</span>
+            <span>.</span>
+          </span>
+        </div>
+      )}
     </section>
   );
 };

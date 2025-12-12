@@ -87,15 +87,15 @@ Transform chattr from a translation tool into a conversational language learning
 - [x] Dispatch bilingual events in conversation mode
 
 ### Phase 7: Polish & Testing (2-3 hours)
-- [ ] Add loading states ("AI is typing...")
-- [ ] Add error messages for API failures
-- [ ] Test responsive design (mobile/desktop)
-- [ ] Accessibility audit (keyboard, screen readers)
+- [x] Add loading states ("AI is typing...")
+- [x] Add error messages for API failures
+- [x] Test responsive design (mobile/desktop)
+- [x] Accessibility audit (keyboard, screen readers)
 
 ### Phase 8: Documentation (1 hour)
-- [ ] Update README with conversation mode info
-- [ ] Document OpenAI setup process
-- [ ] Add usage examples
+- [x] Update README with conversation mode info
+- [x] Document OpenAI setup process
+- [x] Add usage examples
 
 **Total: 14-21 hours** (3 weeks as sprint)
 

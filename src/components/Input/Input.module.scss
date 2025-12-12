@@ -8,10 +8,16 @@
   background-color: #f3f3f3;
   border-radius: 10px;
   transition: all 0.5s;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: #e0e0e0;
+  }
 }
 
-.input:hover,
-.input:focus {
+.input:hover:not(:disabled),
+.input:focus:not(:disabled) {
   border: 2px solid #4a9dec;
   box-shadow: 0px 0px 0px 7px rgb(74, 157, 236, 20%);
   background-color: white;
