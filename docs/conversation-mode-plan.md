@@ -802,10 +802,10 @@ const handleConversation = async (value: string) => {
    - [x] Test with various languages and inputs
 
 6. **Phase 6: ChatInput Enhancement** (1-2 hours)
-   - [ ] Add mode-aware message handling
-   - [ ] Implement conversation history tracking
-   - [ ] Update event dispatching for bilingual messages
-   - [ ] Test mode switching and persistence
+   - [x] Add mode-aware message handling
+   - [x] Implement conversation history tracking
+   - [x] Update event dispatching for bilingual messages
+   - [x] Test mode switching and persistence
 
 7. **Phase 7: Polish and Testing** (2-3 hours)
    - [ ] Add loading states for AI responses
