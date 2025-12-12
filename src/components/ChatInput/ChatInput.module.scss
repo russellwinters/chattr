@@ -1,3 +1,5 @@
+@import '@/styles/variables';
+
 .container {
   width: 100%;
   display: flex;
@@ -7,11 +9,12 @@
   .error {
     padding: 8px 12px;
     background-color: #fee;
-    color: #c00;
+    color: #a00;
     border: 1px solid #fcc;
     border-radius: 4px;
     font-size: 0.875rem;
     line-height: 1.5;
+    font-weight: 500;
   }
 
   > div:last-child {
@@ -19,6 +22,11 @@
     align-items: center;
     justify-content: space-between;
     gap: 16px;
+    flex-wrap: wrap;
+
+    @media (max-width: 480px) {
+      gap: 8px;
+    }
   }
 
   .input {
@@ -29,5 +37,10 @@
   .button {
     height: 40px;
     width: 140px;
+    flex-shrink: 0;
+
+    @media (max-width: 480px) {
+      width: 100%;
+    }
   }
 }
