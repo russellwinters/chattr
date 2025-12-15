@@ -27,13 +27,13 @@
   }
 
   .loadingIndicator {
-    padding: $spacing-sm $spacing-lg - 8px; // 16px
-    border-radius: $border-radius - 6px; // 4px
+    padding: $spacing-sm $spacing-md-alt;
+    border-radius: $border-radius-sm;
     background-color: $color-text-primary;
     color: $color-text-inverse;
     display: flex;
     align-items: center;
-    gap: $border-radius - 6px; // 4px
+    gap: $border-radius-sm;
 
     .loadingText {
       font-style: italic;
@@ -41,7 +41,7 @@
 
     .loadingDots {
       display: flex;
-      gap: $border-radius - 8px; // 2px
+      gap: $spacing-xs;
 
       span {
         animation: blink 1.4s infinite;
@@ -58,7 +58,7 @@
   }
 
   @media (min-width: $breakpoint-mobile) {
-    padding: $spacing-lg - 8px; // 16px
+    padding: $spacing-md-alt;
 
     .message {
       width: 75%;

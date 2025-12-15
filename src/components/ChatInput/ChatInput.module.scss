@@ -39,7 +39,7 @@
 
   @media (min-width: $breakpoint-mobile) {
     > div:last-child {
-      gap: $spacing-lg - 8px; // 16px
+      gap: $spacing-md-alt;
     }
 
     .button {
