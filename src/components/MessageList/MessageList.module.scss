@@ -27,12 +27,14 @@
   }
 
   .loadingIndicator {
+    width: 100%;
     padding: $spacing-sm $spacing-md-alt;
     border-radius: $border-radius-sm;
     background-color: $color-text-primary;
     color: $color-text-inverse;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: $border-radius-sm;
 
     .loadingText {
