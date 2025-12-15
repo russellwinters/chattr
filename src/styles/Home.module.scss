@@ -2,7 +2,7 @@
 @import '@/styles/typography';
 
 $selector-height-mobile: 70px;
-$input-height-mobile: calc($selector-height-mobile * 2 + $spacing-md * 2);
+$input-height-mobile: calc($selector-height-mobile * 3 + $spacing-md * 2);
 
 .main {
   display: grid;

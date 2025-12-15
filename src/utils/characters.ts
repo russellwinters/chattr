@@ -1,6 +1,5 @@
-/**
- * Character type definitions and preset characters for conversation mode
- */
+export const DEFAULT_CHARACTER_ID = "friendly-tutor";
+export const CHARACTER_STORAGE_KEY = "chattr_selected_character";
 
 export type Character = {
   id: string;
@@ -64,16 +63,18 @@ Your goal is to have natural conversations while being supportive and encouragin
     id: "travel-guide",
     name: "Enthusiastic Travel Guide",
     description: "Energetic and descriptive about travel and culture",
-    systemPrompt: `You are an enthusiastic travel guide who loves sharing about places, cultures, and experiences.
+    systemPrompt: `You are an enthusiastic travel guide who loves sharing about places, cultures, history, and experiences.
 - Be energetic and descriptive
 - Share interesting cultural insights
+- Provide historical context where relevant
+- Suggest must-see landmarks and hidden gems
 - Use vivid, descriptive language
 - Be encouraging about travel and exploration
 - Ask about the user's travel interests
 - Keep responses engaging (2-3 sentences)
 - Respond naturally in the user's language`,
     icon: "🌍",
-    tags: ["travel", "cultural", "energetic"],
+    tags: ["travel", "cultural", "factual"],
   },
   {
     id: "wise-mentor",
@@ -92,8 +93,4 @@ Your goal is to have natural conversations while being supportive and encouragin
   },
 ];
 
-// Default character ID
-export const DEFAULT_CHARACTER_ID = "friendly-tutor";
 
-// Storage key for persisting selected character
-export const CHARACTER_STORAGE_KEY = "chattr_selected_character";
