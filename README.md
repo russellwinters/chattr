@@ -16,11 +16,18 @@ A real-time translation and conversation application that helps you learn langua
 - Context-aware responses for natural conversations
 - Language learning focused interactions
 - Conversation history tracking (last 10 messages for context)
+- **Character Selection**: Choose from 5 AI personas to customize your learning experience
+  - 👨‍🏫 **Friendly Tutor**: Patient and encouraging, perfect for beginners
+  - 😊 **Casual Friend**: Relaxed, informal conversation like chatting with a friend
+  - 💼 **Business Professional**: Formal, professional for workplace scenarios
+  - 🌍 **Enthusiastic Travel Guide**: Energetic, descriptive for travel preparation
+  - 🧙 **Wise Mentor**: Thoughtful, reflective for deeper discussions
 
 ### General Features
 - Mode selector to switch between translation and conversation modes
 - Language selector with support for 31 DeepL languages
-- Persistent mode and language preferences (localStorage)
+- Character selector for conversation mode (5 preset personas)
+- Persistent mode, language, and character preferences (localStorage)
 - Simple, clean UI built with React and SASS
 
 ## Prerequisites
@@ -62,16 +69,20 @@ A real-time translation and conversation application that helps you learn langua
 ### Conversation Mode
 1. Toggle to "Conversation" mode using the mode selector
 2. Select your target language from the language selector
-3. Type your message in any language and press Enter or click Submit
-4. The AI will respond conversationally, with both the original and translated versions displayed
-5. The conversation maintains context for natural, flowing dialogue (tracks last 10 messages)
-6. You'll see "AI is typing..." while waiting for responses
+3. Choose your preferred AI character from the character selector (appears in conversation mode)
+4. Type your message in any language and press Enter or click Submit
+5. The AI will respond conversationally in the style of your chosen character, with both the original and translated versions displayed
+6. The conversation maintains context for natural, flowing dialogue (tracks last 10 messages)
+7. You'll see "Loading response and translation..." while waiting for responses
+8. **Note**: Switching characters will clear your current conversation to start fresh with the new persona
 
 **Note**: Conversation mode requires an OpenAI API key to be configured. If OpenAI is not available, the system will fall back to translation-only mode.
 
 ### Example Conversation Flow
 
 Here's how a typical conversation might look when learning Spanish:
+
+**Example with Friendly Tutor (👨‍🏫)**:
 
 **You (in English)**: "Hello, I'm learning Spanish. Can you help me practice?"
 - _Translation shown in Spanish_: "Hola, estoy aprendiendo español. ¿Puedes ayudarme a practicar?"
@@ -80,6 +91,16 @@ Here's how a typical conversation might look when learning Spanish:
 - _Translation shown in Spanish_: "¡Hola! Por supuesto, estaré encantado de ayudarte a practicar español. ¿De qué te gustaría hablar?"
 
 The AI maintains context throughout the conversation, so you can ask follow-up questions naturally. Each message displays in both the original language and your selected target language to help you learn.
+
+### Choosing the Right Character
+
+Each character offers a unique conversational style:
+
+- **👨‍🏫 Friendly Tutor**: Best for beginners or structured learning. Patient, encouraging, and educational in tone.
+- **😊 Casual Friend**: Perfect for everyday conversation practice. Uses informal language, contractions, and casual expressions.
+- **💼 Business Professional**: Ideal for learning professional language for workplace settings, formal meetings, or business correspondence.
+- **🌍 Enthusiastic Travel Guide**: Great for travel preparation. Energetic, descriptive, and culturally informative.
+- **🧙 Wise Mentor**: Suited for advanced learners who want deeper, more philosophical conversations and reflective dialogue.
 
 ### Keyboard Navigation
 - **Tab**: Navigate between interactive elements (mode selector, language selector, input field, submit button)
@@ -111,30 +132,34 @@ The AI maintains context throughout the conversation, so you can ask follow-up q
 ```
 src/
 ├── components/
-│   ├── Button/           # Submit button component
-│   ├── ChatInput/        # Input field with mode-aware logic
-│   ├── Input/            # Base input component
-│   ├── LanguageSelector/ # Language selection dropdown
-│   ├── MessageBox/       # Individual message display (bilingual support)
-│   ├── MessageList/      # Message history container
-│   └── ModeSelector/     # Translation/Conversation mode toggle
+│   ├── Button/              # Submit button component
+│   ├── CharacterSelector/   # Character selection dropdown (conversation mode)
+│   ├── ChatInput/           # Input field with mode-aware logic
+│   ├── Input/               # Base input component
+│   ├── LanguageSelector/    # Language selection dropdown
+│   ├── MessageBox/          # Individual message display (bilingual support)
+│   ├── MessageList/         # Message history container
+│   └── ModeSelector/        # Translation/Conversation mode toggle
 ├── contexts/
+│   ├── CharacterContext.tsx # Character state management
 │   ├── LanguageContext.tsx  # Language state management
 │   └── ModeContext.tsx      # Mode state management
 ├── hooks/
-│   ├── useLanguage.ts    # Hook to access language context
-│   └── useMode.ts        # Hook to access mode context
+│   ├── useCharacter.ts      # Hook to access character context
+│   ├── useLanguage.ts       # Hook to access language context
+│   └── useMode.ts           # Hook to access mode context
 ├── lib/
-│   └── openai.ts         # OpenAI client configuration
+│   └── openai.ts            # OpenAI client configuration
 ├── pages/
 │   ├── api/
-│   │   ├── conversation.ts # Conversation API with AI + translation
-│   │   └── translate.ts    # DeepL translation endpoint
-│   ├── _app.tsx            # App wrapper with providers
-│   └── index.tsx           # Main chat page
+│   │   ├── conversation.ts  # Conversation API with AI + translation
+│   │   └── translate.ts     # DeepL translation endpoint
+│   ├── _app.tsx             # App wrapper with providers
+│   └── index.tsx            # Main chat page
 └── utils/
-    ├── events.ts         # Custom event system for messages
-    └── languages.ts      # Language codes and utilities
+    ├── characters.ts        # Character definitions and presets
+    ├── events.ts            # Custom event system for messages
+    └── languages.ts         # Language codes and utilities
 ```
 
 ## Development Status
@@ -151,6 +176,10 @@ src/
 - [x] Error handling with fallback to translation-only mode
 - [x] ChatInput mode-aware routing
 - [x] Conversation history tracking in component state
+- [x] **Character Selection System** (5 preset personas)
+- [x] Character-specific AI prompts and personalities
+- [x] Character persistence across sessions (localStorage)
+- [x] Clear conversation when switching characters
 
 ### Future Roadmap 📋
 - [ ] Conversation history persistence (localStorage)
@@ -193,8 +222,16 @@ src/
 
 **Slow responses in Conversation Mode**
 - This is normal - AI responses can take 2-5 seconds
-- You'll see "AI is typing..." while waiting
+- You'll see "Loading response and translation..." while waiting
 - Check your internet connection if it takes longer than 10 seconds
+
+**Character selector not showing**
+- Character selector only appears in Conversation mode
+- Switch to Conversation mode using the mode selector to see character options
+
+**AI personality doesn't seem right**
+- Try switching to a different character to find the style that suits your learning goals
+- Note that switching characters will clear your current conversation
 
 ### API Key Setup
 
