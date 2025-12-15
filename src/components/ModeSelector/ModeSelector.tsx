@@ -14,6 +14,10 @@ const ModeSelector: FC<ModeSelectorProps> = ({
 }) => {
   const { mode, setMode } = useMode();
 
+  const clearConversation = () => {
+    window.dispatchEvent(new CustomEvent("clearConversation"));
+  }
+
   return (
     <div className={cx(styles.container, classNames)}>
       <label className={styles.label}>Mode:</label>
@@ -22,7 +26,7 @@ const ModeSelector: FC<ModeSelectorProps> = ({
           className={cx(styles.option, {
             [styles.active]: mode === "translation",
           })}
-          onClick={() => setMode("translation")}
+          onClick={() => { setMode("translation"); clearConversation(); }}
           disabled={disabled}
           aria-pressed={mode === "translation"}
           aria-label="Translation mode"
@@ -33,7 +37,7 @@ const ModeSelector: FC<ModeSelectorProps> = ({
           className={cx(styles.option, {
             [styles.active]: mode === "conversation",
           })}
-          onClick={() => setMode("conversation")}
+          onClick={() => { setMode("conversation"); clearConversation(); }}
           disabled={disabled}
           aria-pressed={mode === "conversation"}
           aria-label="Conversation mode"

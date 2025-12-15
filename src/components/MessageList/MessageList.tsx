@@ -60,10 +60,6 @@ const MessageList: FC<Props> = ({ classNames }) => {
     };
   }, []);
 
-  useEffect(() => {
-    setMessages(MESSAGES_DEFAULT);
-  }, [mode])
-
   return (
     <section className={cx(styles.messageList, classNames)} aria-live="polite" aria-label="Message history">
       {messages.map((m) => {
