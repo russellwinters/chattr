@@ -3,6 +3,11 @@ $color-primary: #4a9dec;
 $color-background: #f3f3f3;
 $color-background-hover: white;
 $color-border-transparent: transparent;
+$color-error-bg: #fee;
+$color-error-text: #a00;
+$color-error-border: #fcc;
+$color-text-primary: black;
+$color-text-inverse: white;
 
 // Sizes
 $border-width: 2px;
@@ -21,4 +26,5 @@ $box-shadow-focus: 0px 0px 0px 7px rgba($color-primary, 0.2);
 $transition-default: all 0.5s;
 
 // Breakpoints
+$breakpoint-mobile: 480px;
 $breakpoint-tablet: 768px;
