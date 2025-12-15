@@ -57,35 +57,37 @@ Add AI character personas to conversation mode, allowing users to choose differe
 ## Implementation Checklist
 
 ### Phase 1: Character Infrastructure (2-3 hours)
-- [ ] Define Character type and preset characters in `/src/utils/characters.ts`
-- [ ] Create `/src/contexts/CharacterContext.tsx`
-- [ ] Create `/src/hooks/useCharacter.ts`
-- [ ] Add `CharacterProvider` to `/src/pages/_app.tsx`
-- [ ] Test localStorage persistence
+- [x] Define Character type and preset characters in `/src/utils/characters.ts`
+- [x] Create `/src/contexts/CharacterContext.tsx`
+- [x] Create `/src/hooks/useCharacter.ts`
+- [x] Add `CharacterProvider` to `/src/pages/_app.tsx`
+- [x] Test localStorage persistence
 
 ### Phase 2: Character Selector UI (2-3 hours)
-- [ ] Create `/src/components/CharacterSelector/` component
-- [ ] Add dropdown styling (SCSS)
-- [ ] Integrate with `useCharacter` hook
-- [ ] Add conditional rendering (only show in conversation mode)
-- [ ] Add to main page layout
-- [ ] Test character selection and display
+- [x] Create `/src/components/CharacterSelector/` component
+- [x] Add dropdown styling (SCSS)
+- [x] Integrate with `useCharacter` hook
+- [x] Add conditional rendering (only show in conversation mode)
+- [x] Add to main page layout
+- [x] Test character selection and display
 
 ### Phase 3: API Integration (2-3 hours)
-- [ ] Update `/src/pages/api/conversation.ts` to accept characterId
-- [ ] Update `/src/lib/openai.ts` to support character prompts
-- [ ] Test each preset character's response style
-- [ ] Verify conversation quality with different characters
+- [x] Update `/src/pages/api/conversation.ts` to accept characterId
+- [x] Update `/src/lib/openai.ts` to support character prompts
+- [x] Test each preset character's response style
+- [x] Verify conversation quality with different characters
 
 ### Phase 4: ChatInput Enhancement (1-2 hours)
-- [ ] Pass characterId to conversation API from ChatInput
-- [ ] Test character context in conversations
-- [ ] Verify character persistence across messages
+- [x] Pass characterId to conversation API from ChatInput
+- [x] Test character context in conversations
+- [x] Verify character persistence across messages
 
 ### Phase 5: Polish & Testing (2-3 hours)
 - [ ] Test all characters with multiple languages
 - [ ] Verify character persistence across page refreshes
-- [ ] Test character switching mid-conversation
+- [ ] Changing characters should clear conversation
+- [ ] Update the loading message to be full width and mention loading response and translation
+- [ ] Move the submit button to the same line as the input on all screen sizes
 - [ ] Responsive design testing (mobile/desktop)
 - [ ] Accessibility audit (keyboard, screen readers)
 
