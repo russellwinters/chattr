@@ -1,17 +1,20 @@
+@import '@/styles/variables';
+
 .messageList {
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  gap: 8px;
-  border: 1px solid black;
-  border-radius: 8px;
-  padding: 16px;
+  gap: $spacing-sm;
+  border: 1px solid $color-text-primary;
+  border-radius: $spacing-sm;
+  padding: $spacing-md;
   overflow: hidden;
   overflow-y: scroll;
 
   .message {
-    width: 60%;
+    width: 85%;
+    max-width: 100%;
 
     &.incoming {
       align-self: flex-start;
@@ -21,5 +24,59 @@
       text-align: right;
       align-self: flex-end;
     }
+  }
+
+  .loadingIndicator {
+    padding: $spacing-sm $spacing-md-alt;
+    border-radius: $border-radius-sm;
+    background-color: $color-text-primary;
+    color: $color-text-inverse;
+    display: flex;
+    align-items: center;
+    gap: $border-radius-sm;
+
+    .loadingText {
+      font-style: italic;
+    }
+
+    .loadingDots {
+      display: flex;
+      gap: $spacing-xs;
+
+      span {
+        animation: blink 1.4s infinite;
+        
+        &:nth-child(2) {
+          animation-delay: 0.2s;
+        }
+        
+        &:nth-child(3) {
+          animation-delay: 0.4s;
+        }
+      }
+    }
+  }
+
+  @media (min-width: $breakpoint-mobile) {
+    padding: $spacing-md-alt;
+
+    .message {
+      width: 75%;
+    }
+  }
+
+  @media (min-width: $breakpoint-tablet) {
+    .message {
+      width: 60%;
+    }
+  }
+}
+
+@keyframes blink {
+  0%, 60%, 100% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
   }
 }

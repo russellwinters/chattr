@@ -3,13 +3,21 @@ $color-primary: #4a9dec;
 $color-background: #f3f3f3;
 $color-background-hover: white;
 $color-border-transparent: transparent;
+$color-error-bg: #fee;
+$color-error-text: #a00;
+$color-error-border: #fcc;
+$color-text-primary: black;
+$color-text-inverse: white;
 
 // Sizes
 $border-width: 2px;
 $border-radius: 10px;
+$border-radius-sm: 4px;
 $input-height: 40px;
+$spacing-xs: 2px;
 $spacing-sm: 8px;
 $spacing-md: 12px;
+$spacing-md-alt: 16px;
 $spacing-lg: 24px;
 $spacing-xl: 40px;
 $content-width-max: 860px;
@@ -21,4 +29,5 @@ $box-shadow-focus: 0px 0px 0px 7px rgba($color-primary, 0.2);
 $transition-default: all 0.5s;
 
 // Breakpoints
+$breakpoint-mobile: 480px;
 $breakpoint-tablet: 768px;

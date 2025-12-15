@@ -1,17 +1,49 @@
+@import '@/styles/variables';
+@import '@/styles/typography';
+
 .container {
   width: 100%;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  flex-direction: column;
+  gap: $spacing-sm;
+
+  .error {
+    padding: $spacing-sm $spacing-md;
+    background-color: $color-error-bg;
+    color: $color-error-text;
+    border: 1px solid $color-error-border;
+    border-radius: $border-radius;
+    font-size: $font-size-sm;
+    line-height: 1.5;
+    font-weight: $font-weight-medium;
+  }
+
+  > div:last-child {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing-sm;
+    flex-wrap: wrap;
+  }
 
   .input {
-    height: 40px;
+    height: $input-height;
     width: 100%;
   }
 
   .button {
-    height: 40px;
-    width: 140px;
+    height: $input-height;
+    width: 100%;
+    flex-shrink: 0;
+  }
+
+  @media (min-width: $breakpoint-mobile) {
+    > div:last-child {
+      gap: $spacing-md-alt;
+    }
+
+    .button {
+      width: 140px;
+    }
   }
 }
