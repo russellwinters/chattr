@@ -6,6 +6,7 @@ import {
   ConversationMessage,
   isOpenAIConfigured,
 } from "@/lib/openai";
+import { PRESET_CHARACTERS } from "@/utils/characters";
 
 const translator = new deepl.Translator(process.env.DEEPL_API_KEY || "");
 
@@ -13,6 +14,7 @@ type ConversationRequestBody = {
   userMessage: string;
   targetLanguage: string;
   conversationHistory?: ConversationMessage[];
+  characterId?: string;
 };
 
 type ConversationSuccessResponse = {
@@ -59,9 +61,19 @@ export default async function handler(
     return handleTranslationFallback(data.userMessage, targetLanguage, res);
   }
 
+  // Get character-specific system prompt if characterId is provided
+  let characterSystemPrompt: string | undefined;
+  if (data.characterId) {
+    const character = PRESET_CHARACTERS.find((c) => c.id === data.characterId);
+    if (character) {
+      characterSystemPrompt = character.systemPrompt;
+    }
+  }
+
   const conversationResponse = await generateConversationResponse(
     data.userMessage,
-    conversationHistory
+    conversationHistory,
+    characterSystemPrompt
   ).catch((error) => {
     console.error("OpenAI API error, falling back to translation:", error);
     return null;
