@@ -15,6 +15,10 @@ const LanguageSelector: FC<LanguageSelectorProps> = ({
 }) => {
   const { targetLanguage, setTargetLanguage, availableLanguages } = useLanguage();
 
+  const clearConversation = () => {
+    window.dispatchEvent(new CustomEvent("clearConversation"));
+  }
+
   return (
     <div className={cx(styles.container, classNames)}>
       <label htmlFor="language-selector" className={styles.label}>
@@ -23,7 +27,7 @@ const LanguageSelector: FC<LanguageSelectorProps> = ({
       <select
         id="language-selector"
         value={targetLanguage}
-        onChange={(e) => setTargetLanguage(e.target.value as TargetLanguageCode)}
+        onChange={(e) => { setTargetLanguage(e.target.value as TargetLanguageCode); clearConversation() }}
         disabled={disabled}
         className={styles.select}
         aria-label="Select target translation language"

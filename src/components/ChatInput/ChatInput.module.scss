@@ -23,27 +23,22 @@
     align-items: center;
     justify-content: space-between;
     gap: $spacing-sm;
-    flex-wrap: wrap;
   }
 
   .input {
     height: $input-height;
-    width: 100%;
+    flex: 1;
   }
 
   .button {
     height: $input-height;
-    width: 100%;
+    width: 140px;
     flex-shrink: 0;
   }
 
   @media (min-width: $breakpoint-mobile) {
     > div:last-child {
       gap: $spacing-md-alt;
-    }
-
-    .button {
-      width: 140px;
     }
   }
 }

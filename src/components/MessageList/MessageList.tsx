@@ -43,20 +43,22 @@ const MessageList: FC<Props> = ({ classNames }) => {
       }
     };
 
+    const clearHandler = () => {
+      setMessages(MESSAGES_DEFAULT);
+    };
+
     window.addEventListener("messageIncoming", messageReceiver);
     window.addEventListener("messageOutgoing", messageReceiver);
     window.addEventListener("conversationLoading", loadingHandler);
+    window.addEventListener("clearConversation", clearHandler);
 
     return () => {
       window.removeEventListener("messageIncoming", messageReceiver);
       window.removeEventListener("messageOutgoing", messageReceiver);
       window.removeEventListener("conversationLoading", loadingHandler);
+      window.removeEventListener("clearConversation", clearHandler);
     };
   }, []);
-
-  useEffect(() => {
-    setMessages(MESSAGES_DEFAULT);
-  }, [mode])
 
   return (
     <section className={cx(styles.messageList, classNames)} aria-live="polite" aria-label="Message history">
@@ -76,8 +78,8 @@ const MessageList: FC<Props> = ({ classNames }) => {
         );
       })}
       {isLoading && mode === "conversation" && (
-        <div className={cx(styles.message, styles.incoming, styles.loadingIndicator)}>
-          <span className={styles.loadingText}>AI is typing</span>
+        <div className={cx(styles.loadingIndicator)}>
+          <span className={styles.loadingText}>Loading response and translation</span>
           <span className={styles.loadingDots}>
             <span>.</span>
             <span>.</span>

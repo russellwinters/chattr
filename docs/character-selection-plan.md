@@ -751,44 +751,47 @@ export default async function POST(
 
 ### Implementation Order (Recommended)
 
-1. **Phase 1: Character Infrastructure** (2-3 hours)
-   - [ ] Define Character type and preset characters
-   - [ ] Create `CharacterContext` with localStorage persistence
-   - [ ] Create `useCharacter` custom hook
-   - [ ] Add `CharacterProvider` to `_app.tsx`
-   - [ ] Test character state management
+1. **Phase 1: Character Infrastructure** (2-3 hours) ✅ COMPLETED
+   - [x] Define Character type and preset characters
+   - [x] Create `CharacterContext` with localStorage persistence
+   - [x] Create `useCharacter` custom hook
+   - [x] Add `CharacterProvider` to `_app.tsx`
+   - [x] Test character state management
 
-2. **Phase 2: Character Selector UI** (2-3 hours)
-   - [ ] Create `CharacterSelector` component (dropdown)
-   - [ ] Add SCSS styling for dropdown
-   - [ ] Integrate with `useCharacter` hook
-   - [ ] Add conditional rendering (show only in conversation mode)
-   - [ ] Add to main page layout
-   - [ ] Test character selection and persistence
+2. **Phase 2: Character Selector UI** (2-3 hours) ✅ COMPLETED
+   - [x] Create `CharacterSelector` component (dropdown)
+   - [x] Add SCSS styling for dropdown
+   - [x] Integrate with `useCharacter` hook
+   - [x] Add conditional rendering (show only in conversation mode)
+   - [x] Add to main page layout
+   - [x] Test character selection and persistence
 
-3. **Phase 3: API Integration** (2-3 hours)
-   - [ ] Update conversation API to accept characterId
-   - [ ] Update OpenAI integration to use character prompts
-   - [ ] Add character prompt interpolation with target language
-   - [ ] Test each preset character's response style
-   - [ ] Verify conversation quality with different characters
+3. **Phase 3: API Integration** (2-3 hours) ✅ COMPLETED
+   - [x] Update conversation API to accept characterId
+   - [x] Update OpenAI integration to use character prompts
+   - [x] Add character prompt interpolation with target language
+   - [x] Test each preset character's response style
+   - [x] Verify conversation quality with different characters
 
-4. **Phase 4: ChatInput Enhancement** (1-2 hours)
-   - [ ] Pass characterId to conversation API from ChatInput
-   - [ ] Test character context in conversations
-   - [ ] Verify character persistence across messages
+4. **Phase 4: ChatInput Enhancement** (1-2 hours) ✅ COMPLETED
+   - [x] Pass characterId to conversation API from ChatInput
+   - [x] Test character context in conversations
+   - [x] Verify character persistence across messages
 
-5. **Phase 5: Polish and Testing** (2-3 hours)
-   - [ ] Test all preset characters with multiple languages
-   - [ ] Verify character persistence across page refreshes
-   - [ ] Test responsive design (mobile/desktop)
-   - [ ] Accessibility audit (keyboard navigation, screen readers)
-   - [ ] Edge case testing (switching characters mid-conversation)
+5. **Phase 5: Polish and Testing** (2-3 hours) ✅ COMPLETED
+   - [x] Test all preset characters with multiple languages
+   - [x] Verify character persistence across page refreshes
+   - [x] Test responsive design (mobile/desktop)
+   - [x] Accessibility audit (keyboard navigation, screen readers)
+   - [x] Edge case testing (switching characters mid-conversation)
+   - [x] **NEW**: Clear conversation when switching characters
+   - [x] **NEW**: Update loading message to full width with "Loading response and translation..."
+   - [x] **NEW**: Move submit button to same line as input on all screen sizes
 
-6. **Phase 6: Documentation** (1 hour)
-   - [ ] Update README with character selection feature
-   - [ ] Document preset characters and their use cases
-   - [ ] Add user guide for character selection
+6. **Phase 6: Documentation** (1 hour) ✅ COMPLETED
+   - [x] Update README with character selection feature
+   - [x] Document preset characters and their use cases
+   - [x] Add user guide for character selection
 
 **MVP Total Estimated Time: 11-16 hours**
 

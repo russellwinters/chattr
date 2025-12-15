@@ -26,6 +26,7 @@ const CharacterSelector: FC<CharacterSelectorProps> = ({
     const character = availableCharacters.find((c) => c.id === e.target.value);
     if (character) {
       setSelectedCharacter(character);
+      window.dispatchEvent(new CustomEvent("clearConversation"));
     }
   };
 

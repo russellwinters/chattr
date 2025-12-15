@@ -1,5 +1,5 @@
 import { dispatchIncomingEvent, dispatchOutgoingEvent } from "@/utils/events";
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useMode } from "@/hooks/useMode";
 import { useCharacter } from "@/hooks/useCharacter";
@@ -16,6 +16,19 @@ const ChatInput: FC = () => {
   const [conversationHistory, setConversationHistory] = useState<ConversationMessage[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Clear conversation history when character changes
+  useEffect(() => {
+    const clearHandler = () => {
+      setConversationHistory([]);
+    };
+
+    window.addEventListener("clearConversation", clearHandler);
+
+    return () => {
+      window.removeEventListener("clearConversation", clearHandler);
+    };
+  }, []);
 
   const handleTranslation = async (value: string) => {
     setError(null);
