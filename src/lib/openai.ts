@@ -66,7 +66,7 @@ export type ConversationMessage = {
 export async function generateConversationResponse(
   userMessage: string,
   conversationHistory: ConversationMessage[] = [],
-  characterSystemPrompt?: string
+  characterPrompt: string = SYSTEM_PROMPT
 ): Promise<string> {
   if (!process.env.OPENAI_API_KEY) {
     throw new Error(
@@ -75,11 +75,8 @@ export async function generateConversationResponse(
   }
 
   try {
-    // Use character-specific prompt if provided, otherwise use default
-    const systemPrompt = characterSystemPrompt || SYSTEM_PROMPT;
-
     const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
-      { role: "system", content: systemPrompt },
+      { role: "system", content: characterPrompt },
       ...conversationHistory.slice(-MAX_CONVERSATION_HISTORY),
       { role: "user", content: userMessage },
     ];
@@ -100,7 +97,7 @@ export async function generateConversationResponse(
     return response.trim();
   } catch (error) {
     if (error instanceof Error) {
-      throw new Error(`OpenAI API error: ${error.message}`);
+      throw new Error(` APOpenAII error: ${error.message}`);
     }
     throw new Error("Unknown error occurred while calling OpenAI API");
   }

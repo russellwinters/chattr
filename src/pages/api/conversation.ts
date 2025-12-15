@@ -61,14 +61,8 @@ export default async function handler(
     return handleTranslationFallback(data.userMessage, targetLanguage, res);
   }
 
-  // Get character-specific system prompt if characterId is provided
-  let characterSystemPrompt: string | undefined;
-  if (data.characterId) {
-    const character = PRESET_CHARACTERS.find((c) => c.id === data.characterId);
-    if (character) {
-      characterSystemPrompt = character.systemPrompt;
-    }
-  }
+
+  const characterSystemPrompt = getCharacterPrompt(data.characterId);
 
   const conversationResponse = await generateConversationResponse(
     data.userMessage,
@@ -188,4 +182,10 @@ async function handleTranslationFallback(
       "I'm unable to generate a conversation response right now. Here's the translation of your message.",
     fallback: true,
   } as ConversationSuccessResponse & { fallback: boolean });
+}
+
+function getCharacterPrompt(characterId?: string): string | undefined {
+  if (!characterId) return undefined;
+  const character = PRESET_CHARACTERS.find((c) => c.id === characterId);
+  return character?.systemPrompt
 }

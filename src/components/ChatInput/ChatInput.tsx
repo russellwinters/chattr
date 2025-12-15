@@ -55,7 +55,6 @@ const ChatInput: FC = () => {
     setError(null);
     setIsLoading(true);
 
-    // Dispatch loading indicator
     window.dispatchEvent(new CustomEvent("conversationLoading", { detail: { isLoading: true } }));
 
     try {
