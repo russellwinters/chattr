@@ -48,6 +48,7 @@ export type ConversationMessage = {
  * 
  * @param userMessage - The user's message in their original language
  * @param conversationHistory - Array of previous messages for context (max 10)
+ * @param characterSystemPrompt - Optional character-specific system prompt to use instead of default
  * @returns The AI's response in the same language as the user's message
  * 
  * @throws Error if OpenAI API key is not configured
@@ -64,7 +65,8 @@ export type ConversationMessage = {
  */
 export async function generateConversationResponse(
   userMessage: string,
-  conversationHistory: ConversationMessage[] = []
+  conversationHistory: ConversationMessage[] = [],
+  characterPrompt: string = SYSTEM_PROMPT
 ): Promise<string> {
   if (!process.env.OPENAI_API_KEY) {
     throw new Error(
@@ -74,7 +76,7 @@ export async function generateConversationResponse(
 
   try {
     const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
-      { role: "system", content: SYSTEM_PROMPT },
+      { role: "system", content: characterPrompt },
       ...conversationHistory.slice(-MAX_CONVERSATION_HISTORY),
       { role: "user", content: userMessage },
     ];
@@ -95,7 +97,7 @@ export async function generateConversationResponse(
     return response.trim();
   } catch (error) {
     if (error instanceof Error) {
-      throw new Error(`OpenAI API error: ${error.message}`);
+      throw new Error(` APOpenAII error: ${error.message}`);
     }
     throw new Error("Unknown error occurred while calling OpenAI API");
   }
