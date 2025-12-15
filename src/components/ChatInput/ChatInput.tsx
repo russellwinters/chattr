@@ -2,6 +2,7 @@ import { dispatchIncomingEvent, dispatchOutgoingEvent } from "@/utils/events";
 import { FC, useState } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useMode } from "@/hooks/useMode";
+import { useCharacter } from "@/hooks/useCharacter";
 import { ConversationMessage } from "@/lib/openai";
 import Button from "../Button";
 import Input from "../Input";
@@ -11,6 +12,7 @@ const ChatInput: FC = () => {
   const [value, setValue] = useState<string | undefined>();
   const { targetLanguage } = useLanguage();
   const { mode } = useMode();
+  const { selectedCharacter } = useCharacter();
   const [conversationHistory, setConversationHistory] = useState<ConversationMessage[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -66,6 +68,7 @@ const ChatInput: FC = () => {
           userMessage: value,
           targetLanguage,
           conversationHistory,
+          characterId: selectedCharacter.id,
         }),
       });
 
