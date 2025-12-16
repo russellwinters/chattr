@@ -8,10 +8,19 @@ import OpenAI from "openai";
  * to the target language via the DeepL API.
  */
 
+// Lazy initialization to ensure env vars are available at runtime (required for Amplify SSR)
+let openaiClient: OpenAI | null = null;
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || "",
-});
+function getOpenAIClient(): OpenAI {
+  if (!openaiClient) {
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      throw new Error("OPENAI_API_KEY environment variable is not set");
+    }
+    openaiClient = new OpenAI({ apiKey });
+  }
+  return openaiClient;
+}
 
 // Model selection: https://platform.openai.com/docs/models
 // Pricing: https://openai.com/api/pricing/
@@ -81,7 +90,7 @@ export async function generateConversationResponse(
       { role: "user", content: userMessage },
     ];
 
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAIClient().chat.completions.create({
       model: CONVERSATION_MODEL,
       messages,
       max_tokens: MAX_RESPONSE_TOKENS,
@@ -108,4 +117,4 @@ export function isOpenAIConfigured(): boolean {
   return Boolean(process.env.OPENAI_API_KEY);
 }
 
-export default openai;
+export { getOpenAIClient };

@@ -8,7 +8,19 @@ import {
 } from "@/lib/openai";
 import { PRESET_CHARACTERS } from "@/utils/characters";
 
-const translator = new deepl.Translator(process.env.DEEPL_API_KEY || "");
+// Lazy initialization to ensure env vars are available at runtime (required for Amplify SSR)
+let translator: deepl.Translator | null = null;
+
+function getTranslator(): deepl.Translator {
+  if (!translator) {
+    const apiKey = process.env.DEEPL_API_KEY;
+    if (!apiKey) {
+      throw new Error("DEEPL_API_KEY environment variable is not set");
+    }
+    translator = new deepl.Translator(apiKey);
+  }
+  return translator;
+}
 
 type ConversationRequestBody = {
   userMessage: string;
@@ -110,7 +122,7 @@ async function batchTranslate(
   targetLanguage: TargetLanguageCode
 ): Promise<ConversationSuccessResponse> {
   const combinedText = `${userMessage}\n|||DEEPL_DELIMITER|||\n${assistantResponse}`;
-  const translationResult = await translator.translateText(
+  const translationResult = await getTranslator().translateText(
     combinedText,
     null,
     targetLanguage
@@ -142,8 +154,8 @@ async function translateSeparately(
   targetLanguage: TargetLanguageCode
 ): Promise<ConversationSuccessResponse> {
   const [userTranslation, assistantTranslation] = await Promise.all([
-    translator.translateText(userMessage, null, targetLanguage),
-    translator.translateText(assistantResponse, null, targetLanguage),
+    getTranslator().translateText(userMessage, null, targetLanguage),
+    getTranslator().translateText(assistantResponse, null, targetLanguage),
   ]);
 
   return {
@@ -158,7 +170,7 @@ async function handleTranslationFallback(
   targetLanguage: TargetLanguageCode,
   res: NextApiResponse<ConversationSuccessResponse | ErrorResponse>
 ) {
-  const result = await translator.translateText(
+  const result = await getTranslator().translateText(
     userMessage,
     null,
     targetLanguage
