@@ -6,23 +6,28 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "npx eslint ."
   },
   "dependencies": {
-    "@types/node": "20.8.9",
-    "@types/react": "18.2.33",
-    "@types/react-dom": "18.2.14",
     "classnames": "^2.3.2",
     "deepl-node": "^1.10.2",
-    "eslint": "8.52.0",
-    "eslint-config-next": "14.0.0",
-    "next": "14.0.0",
+    "next": "^16.0.10",
     "openai": "^6.10.0",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "typescript": "5.2.2"
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
   },
   "devDependencies": {
-    "sass": "^1.69.5"
+    "@eslint/eslintrc": "^3.3.3",
+    "@next/eslint-plugin-next": "^16.0.10",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "eslint": "^9.17.0",
+    "eslint-config-next": "^16.0.10",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "sass": "^1.94.2",
+    "typescript": "^5.7.0",
+    "typescript-eslint": "^8.50.0"
   }
 }

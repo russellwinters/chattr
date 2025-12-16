@@ -1,5 +1,5 @@
-@import '@/styles/variables';
-@import '@/styles/typography';
+@use '@/styles/variables' as *;
+@use '@/styles/typography' as *;
 
 .container {
   width: 100%;
@@ -18,7 +18,7 @@
     font-weight: $font-weight-medium;
   }
 
-  > div:last-child {
+  >div:last-child {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -37,7 +37,7 @@
   }
 
   @media (min-width: $breakpoint-mobile) {
-    > div:last-child {
+    >div:last-child {
       gap: $spacing-md-alt;
     }
   }

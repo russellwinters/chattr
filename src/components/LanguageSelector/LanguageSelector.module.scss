@@ -1,5 +1,5 @@
-@import '@/styles/variables';
-@import '@/styles/typography';
+@use '@/styles/variables' as *;
+@use '@/styles/typography' as *;
 
 .container {
   display: flex;
@@ -8,11 +8,11 @@
   justify-content: flex-end;
   gap: $spacing-md;
   width: 100%;
-  
+
   .label {
     @include label-text;
   }
-  
+
   .select {
     width: 100%;
     height: $input-height;
@@ -24,14 +24,14 @@
     cursor: pointer;
     outline: none;
     transition: $transition-default;
-  
+
     &:hover,
     &:focus {
       border: $border-width solid $color-primary;
       box-shadow: $box-shadow-focus;
       background-color: $color-background-hover;
     }
-  
+
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
@@ -43,7 +43,7 @@
   .container {
     flex-direction: row;
     align-items: center;
-    
+
     .select {
       flex: 1;
       max-width: 300px;
