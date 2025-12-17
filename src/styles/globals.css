@@ -19,9 +19,11 @@
   --color-error-border: #fcc;
   --color-message-incoming-bg: black;
   --color-message-incoming-text: white;
+  --color-message-incoming-divider: rgba(255, 255, 255, 0.3);
   --color-message-outgoing-bg: white;
   --color-message-outgoing-text: black;
   --color-message-outgoing-border: black;
+  --color-message-outgoing-divider: rgba(0, 0, 0, 0.15);
 
   --primary-glow: conic-gradient(
     from 180deg at 50% 50%,
@@ -95,9 +97,11 @@
     --color-error-border: #663333;
     --color-message-incoming-bg: #3a3a3a;
     --color-message-incoming-text: white;
+    --color-message-incoming-divider: rgba(255, 255, 255, 0.2);
     --color-message-outgoing-bg: #1a1a1a;
     --color-message-outgoing-text: white;
     --color-message-outgoing-border: #4a4a4a;
+    --color-message-outgoing-divider: rgba(255, 255, 255, 0.2);
   }
 }
 
