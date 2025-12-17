@@ -1,16 +1,18 @@
+@use '@/styles/variables' as *;
+
 .messageBox {
   padding: 8px 16px;
   border-radius: 4px;
 
   &.incoming {
-    color: white;
-    background-color: black;
+    color: $color-message-incoming-text;
+    background-color: $color-message-incoming-bg;
   }
 
   &.outgoing {
-    color: black;
-    background-color: white;
-    border: 1px solid black;
+    color: $color-message-outgoing-text;
+    background-color: $color-message-outgoing-bg;
+    border: 1px solid $color-message-outgoing-border;
   }
 
   &.bilingual {
@@ -22,15 +24,15 @@
     .divider {
       margin: 0.5rem 0;
       border: 0;
-      border-top: 1px solid rgba(128, 128, 128, 0.3);
+      border-top: 1px solid;
     }
 
     &.incoming .divider {
-      border-top-color: rgba(255, 255, 255, 0.2);
+      border-top-color: $color-message-incoming-divider;
     }
 
     &.outgoing .divider {
-      border-top-color: rgba(0, 0, 0, 0.15);
+      border-top-color: $color-message-outgoing-divider;
     }
 
     .translation {

@@ -1,13 +1,20 @@
-// Colors
+// Colors - Using CSS variables for dark mode support
 $color-primary: #4a9dec;
-$color-background: #f3f3f3;
-$color-background-hover: white;
+$color-background: var(--color-background);
+$color-background-hover: var(--color-background-hover);
 $color-border-transparent: transparent;
-$color-error-bg: #fee;
-$color-error-text: #a00;
-$color-error-border: #fcc;
-$color-text-primary: black;
-$color-text-inverse: white;
+$color-error-bg: var(--color-error-bg);
+$color-error-text: var(--color-error-text);
+$color-error-border: var(--color-error-border);
+$color-text-primary: var(--color-text-primary);
+$color-text-inverse: var(--color-text-inverse);
+$color-message-incoming-bg: var(--color-message-incoming-bg);
+$color-message-incoming-text: var(--color-message-incoming-text);
+$color-message-incoming-divider: var(--color-message-incoming-divider);
+$color-message-outgoing-bg: var(--color-message-outgoing-bg);
+$color-message-outgoing-text: var(--color-message-outgoing-text);
+$color-message-outgoing-border: var(--color-message-outgoing-border);
+$color-message-outgoing-divider: var(--color-message-outgoing-divider);
 
 // Sizes
 $border-width: 2px;
