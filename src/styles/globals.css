@@ -9,6 +9,20 @@
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
 
+  /* Light mode colors */
+  --color-background: #f3f3f3;
+  --color-background-hover: white;
+  --color-text-primary: black;
+  --color-text-inverse: white;
+  --color-error-bg: #fee;
+  --color-error-text: #a00;
+  --color-error-border: #fcc;
+  --color-message-incoming-bg: black;
+  --color-message-incoming-text: white;
+  --color-message-outgoing-bg: white;
+  --color-message-outgoing-text: black;
+  --color-message-outgoing-border: black;
+
   --primary-glow: conic-gradient(
     from 180deg at 50% 50%,
     #16abff33 0deg,
@@ -70,6 +84,20 @@
     --callout-border-rgb: 108, 108, 108;
     --card-rgb: 100, 100, 100;
     --card-border-rgb: 200, 200, 200;
+
+    /* Dark mode colors */
+    --color-background: #2a2a2a;
+    --color-background-hover: #3a3a3a;
+    --color-text-primary: white;
+    --color-text-inverse: black;
+    --color-error-bg: #4a2020;
+    --color-error-text: #ffaaaa;
+    --color-error-border: #663333;
+    --color-message-incoming-bg: #3a3a3a;
+    --color-message-incoming-text: white;
+    --color-message-outgoing-bg: #1a1a1a;
+    --color-message-outgoing-text: white;
+    --color-message-outgoing-border: #4a4a4a;
   }
 }
 
