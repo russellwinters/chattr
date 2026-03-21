@@ -32,8 +32,13 @@
 
   .button {
     height: $input-height;
-    width: 140px;
+    width: $input-height;
     flex-shrink: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
   }
 
   @media (min-width: $breakpoint-mobile) {
