@@ -72,8 +72,10 @@ export const SUPPORTED_LANGUAGES: readonly LanguageOption[] = [
 ] as const;
 
 export const DEFAULT_TARGET_LANGUAGE: TargetLanguageCode = "es";
+export const DEFAULT_NATIVE_LANGUAGE: TargetLanguageCode = "en-US";
 
 export const LANGUAGE_STORAGE_KEY = "chattr_target_language";
+export const NATIVE_LANGUAGE_STORAGE_KEY = "chattr_native_language";
 
 export const VALID_LANGUAGE_CODES = new Set<string>(
   SUPPORTED_LANGUAGES.map((lang) => lang.code)

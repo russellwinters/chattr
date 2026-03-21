@@ -25,6 +25,7 @@ function getTranslator(): deepl.Translator {
 type ConversationRequestBody = {
   userMessage: string;
   targetLanguage: string;
+  nativeLanguage?: string;
   conversationHistory?: ConversationMessage[];
   characterId?: string;
 };
@@ -33,6 +34,17 @@ type ConversationSuccessResponse = {
   userMessageTranslation: string;
   assistantResponse: string;
   assistantResponseTranslation: string;
+  detectedInputLanguage?: string;
+  isSameLanguage?: boolean;
+};
+
+const DEEPL_SOURCE_CODE_TO_NAME: Record<string, string> = {
+  BG: "Bulgarian", CS: "Czech", DA: "Danish", DE: "German", EL: "Greek",
+  EN: "English", ES: "Spanish", ET: "Estonian", FI: "Finnish", FR: "French",
+  HU: "Hungarian", ID: "Indonesian", IT: "Italian", JA: "Japanese", KO: "Korean",
+  LT: "Lithuanian", LV: "Latvian", NB: "Norwegian", NL: "Dutch", PL: "Polish",
+  PT: "Portuguese", RO: "Romanian", RU: "Russian", SK: "Slovak", SL: "Slovenian",
+  SV: "Swedish", TR: "Turkish", UK: "Ukrainian", ZH: "Chinese",
 };
 
 type ErrorResponse = {
@@ -42,11 +54,12 @@ type ErrorResponse = {
 
 /**
  * Conversation API endpoint
- * 
- * Implements a 2-step flow:
- * 1. Generate AI response in user's original language
- * 2. Batch translate both user message and AI response to target language
- * 
+ *
+ * Implements a sequential flow:
+ * 1. Translate user message → detect source language via DeepL
+ * 2. Generate AI response with detected language injected into system prompt
+ * 3. Translate AI response to target language
+ *
  * Falls back to translation-only mode if OpenAI is unavailable
  */
 export default async function handler(
@@ -66,6 +79,7 @@ export default async function handler(
   }
 
   const targetLanguage = data.targetLanguage as TargetLanguageCode;
+  const nativeLanguage = (data.nativeLanguage as TargetLanguageCode | undefined) ?? "en-US";
   const conversationHistory = data.conversationHistory || [];
 
   if (!isOpenAIConfigured()) {
@@ -76,34 +90,70 @@ export default async function handler(
 
   const characterSystemPrompt = getCharacterPrompt(data.characterId);
 
-  const conversationResponse = await generateConversationResponse(
+  const userTranslationResult = await getTranslator().translateText(
+    data.userMessage,
+    null,
+    targetLanguage
+  ).catch((error) => {
+    console.error("User message translation error:", error);
+    return null;
+  });
+
+  if (!userTranslationResult) {
+    res.status(500).json({ message: "Translation failed. Please try again." });
+    return;
+  }
+
+  const detectedCode = userTranslationResult.detectedSourceLang?.toUpperCase();
+  const detectedLanguage = detectedCode ? DEEPL_SOURCE_CODE_TO_NAME[detectedCode] ?? null : null;
+  const isSameLanguage = detectedCode
+    ? targetLanguage.toLowerCase().startsWith(detectedCode.toLowerCase())
+    : false;
+
+  const assistantResponse = await generateConversationResponse(
     data.userMessage,
     conversationHistory,
-    characterSystemPrompt
+    characterSystemPrompt,
+    detectedLanguage
   ).catch((error) => {
     console.error("OpenAI API error, falling back to translation:", error);
     return null;
   });
 
-  if (!conversationResponse) {
+  if (!assistantResponse) {
     return handleTranslationFallback(data.userMessage, targetLanguage, res);
   }
 
-  const translationResult = await batchTranslate(
-    data.userMessage,
-    conversationResponse,
-    targetLanguage
-  ).catch((error) => {
-    console.error("Translation error:", error);
-    return null;
-  });
+  // When the user wrote in the target language, translate both the user message and AI
+  // response back to their native language. Otherwise, translate the AI response to the
+  // target language (the user message translation from step 1 is already in target language).
+  const translationTarget = isSameLanguage ? nativeLanguage : targetLanguage;
 
-  if (!translationResult) {
+  const [userMsgNativeResult, aiTranslationResult] = await Promise.all([
+    isSameLanguage
+      ? getTranslator().translateText(data.userMessage, null, nativeLanguage).catch((error) => {
+          console.error("User message native translation error:", error);
+          return null;
+        })
+      : Promise.resolve(userTranslationResult),
+    getTranslator().translateText(assistantResponse, null, translationTarget).catch((error) => {
+      console.error("AI response translation error:", error);
+      return null;
+    }),
+  ]);
+
+  if (!userMsgNativeResult || !aiTranslationResult) {
     res.status(500).json({ message: "Translation failed. Please try again." });
     return;
   }
 
-  res.status(200).json(translationResult);
+  res.status(200).json({
+    userMessageTranslation: userMsgNativeResult.text.trim(),
+    assistantResponse: assistantResponse.trim(),
+    assistantResponseTranslation: aiTranslationResult.text.trim(),
+    detectedInputLanguage: detectedLanguage ?? undefined,
+    isSameLanguage,
+  });
 }
 
 
@@ -116,54 +166,6 @@ function validateRequest(data: ConversationRequestBody): string | null {
   return null;
 }
 
-async function batchTranslate(
-  userMessage: string,
-  assistantResponse: string,
-  targetLanguage: TargetLanguageCode
-): Promise<ConversationSuccessResponse> {
-  const combinedText = `${userMessage}\n|||DEEPL_DELIMITER|||\n${assistantResponse}`;
-  const translationResult = await getTranslator().translateText(
-    combinedText,
-    null,
-    targetLanguage
-  );
-
-  const parsedTranslation = parseTranslation(translationResult.text);
-  const unexpectedParseResponse = parsedTranslation.length !== 2;
-
-  if (unexpectedParseResponse) {
-    return translateSeparately(userMessage, assistantResponse, targetLanguage);
-  }
-
-  const [userMessageTranslation, assistantResponseTranslation] = parsedTranslation;
-
-  return {
-    userMessageTranslation: userMessageTranslation.trim(),
-    assistantResponse: assistantResponseTranslation.trim(),
-    assistantResponseTranslation: assistantResponse.trim(),
-  };
-}
-
-function parseTranslation(translatedText: string): string[] {
-  return translatedText.split("\n|||DEEPL_DELIMITER|||\n");
-}
-
-async function translateSeparately(
-  userMessage: string,
-  assistantResponse: string,
-  targetLanguage: TargetLanguageCode
-): Promise<ConversationSuccessResponse> {
-  const [userTranslation, assistantTranslation] = await Promise.all([
-    getTranslator().translateText(userMessage, null, targetLanguage),
-    getTranslator().translateText(assistantResponse, null, targetLanguage),
-  ]);
-
-  return {
-    userMessageTranslation: userTranslation.text.trim(),
-    assistantResponse: assistantTranslation.text.trim(),
-    assistantResponseTranslation: assistantResponse.trim(),
-  };
-}
 
 async function handleTranslationFallback(
   userMessage: string,
@@ -189,11 +191,11 @@ async function handleTranslationFallback(
 
   res.status(200).json({
     userMessageTranslation: result.text,
-    assistantResponse: result.text,
-    assistantResponseTranslation:
+    assistantResponse:
       "I'm unable to generate a conversation response right now. Here's the translation of your message.",
-    fallback: true,
-  } as ConversationSuccessResponse & { fallback: boolean });
+    assistantResponseTranslation: result.text,
+    isSameLanguage: true,
+  });
 }
 
 function getCharacterPrompt(characterId?: string): string | undefined {
