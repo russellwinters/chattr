@@ -10,7 +10,7 @@ import styles from "./ChatInput.module.scss";
 
 const ChatInput: FC = () => {
   const [value, setValue] = useState<string | undefined>();
-  const { targetLanguage } = useLanguage();
+  const { targetLanguage, nativeLanguage } = useLanguage();
   const { mode } = useMode();
   const { selectedCharacter } = useCharacter();
   const [conversationHistory, setConversationHistory] = useState<ConversationMessage[]>([]);
@@ -79,6 +79,7 @@ const ChatInput: FC = () => {
         body: JSON.stringify({
           userMessage: value,
           targetLanguage,
+          nativeLanguage,
           conversationHistory,
           characterId: selectedCharacter.id,
         }),

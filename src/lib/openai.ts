@@ -40,7 +40,7 @@ export const TEMPERATURE = 0.7;
 export const SYSTEM_PROMPT = `You are a friendly conversation assistant. Your role is to have natural conversations with users who are practicing a new language.
 
 Guidelines:
-- Respond in English
+- Always respond in the same language the user writes in. Mirror their language exactly.
 - Keep your responses concise and conversational (1-2 sentences)
 - Be encouraging and supportive
 - Stay contextual to the conversation
@@ -75,7 +75,8 @@ export type ConversationMessage = {
 export async function generateConversationResponse(
   userMessage: string,
   conversationHistory: ConversationMessage[] = [],
-  characterPrompt: string = SYSTEM_PROMPT
+  characterPrompt: string = SYSTEM_PROMPT,
+  detectedLanguage?: string | null
 ): Promise<string> {
   if (!process.env.OPENAI_API_KEY) {
     throw new Error(
@@ -84,8 +85,12 @@ export async function generateConversationResponse(
   }
 
   try {
+    const systemContent = detectedLanguage
+      ? `${characterPrompt}\nThe user is writing in ${detectedLanguage}. You MUST respond in ${detectedLanguage}.`
+      : characterPrompt;
+
     const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
-      { role: "system", content: characterPrompt },
+      { role: "system", content: systemContent },
       ...conversationHistory.slice(-MAX_CONVERSATION_HISTORY),
       { role: "user", content: userMessage },
     ];
@@ -106,7 +111,7 @@ export async function generateConversationResponse(
     return response.trim();
   } catch (error) {
     if (error instanceof Error) {
-      throw new Error(` APOpenAII error: ${error.message}`);
+      throw new Error(`OpenAI API error: ${error.message}`);
     }
     throw new Error("Unknown error occurred while calling OpenAI API");
   }
