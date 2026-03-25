@@ -15,7 +15,7 @@ export default function Home() {
       <Head>
         <title>Chattr - Language Learning & Translation</title>
         <meta name="description" content="Real-time translation and AI-powered conversation for language learning" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={customSyles.main}>

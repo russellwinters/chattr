@@ -11,7 +11,8 @@ $input-height-mobile: calc($selector-height-mobile * 3 + $spacing-md * 2);
   gap: $spacing-md;
   align-items: center;
   padding: $spacing-xl $spacing-lg;
-  min-height: 100vh;
+  height: 100vh; /* fallback for browsers without dvh support */
+  height: 100dvh; /* tracks visual viewport on iOS when keyboard is open */
   overflow: hidden;
 
   .selectors {
