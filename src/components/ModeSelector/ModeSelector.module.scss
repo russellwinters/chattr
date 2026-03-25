@@ -3,14 +3,14 @@
 
 .container {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-end;
-  gap: $spacing-md;
-  width: 100%;
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+  min-width: 0;
 
   .label {
     @include label-text;
+    display: none;
   }
 
   .toggleGroup {
@@ -30,14 +30,17 @@
     .option {
       flex: 1;
       height: $input-height;
-      padding: $spacing-sm $spacing-md;
+      padding: $spacing-sm $spacing-xs;
       border: none;
       background-color: transparent;
       color: inherit;
-      font-size: $font-size-sm;
+      font-size: 12px;
       cursor: pointer;
       transition: $transition-default;
       outline: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
 
       &:hover {
         background-color: $color-background-hover;
@@ -64,13 +67,27 @@
 
 @media (min-width: $breakpoint-tablet) {
   .container {
+    flex: initial;
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
+    gap: $spacing-md;
+
+    .label {
+      display: block;
+    }
 
     .toggleGroup {
       flex: 1;
       max-width: 300px;
+
+      .option {
+        padding: $spacing-sm $spacing-md;
+        font-size: $font-size-sm;
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
+      }
     }
   }
 }

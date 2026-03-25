@@ -1,13 +1,10 @@
 @use '@/styles/variables' as *;
 @use '@/styles/typography' as *;
 
-$selector-height-mobile: 70px;
-$input-height-mobile: calc($selector-height-mobile * 3 + $spacing-md * 2);
-
 .main {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: $input-height-mobile 1fr 56px;
+  grid-template-rows: auto 1fr 56px;
   gap: $spacing-md;
   align-items: center;
   padding: $spacing-xl $spacing-lg;
@@ -17,9 +14,9 @@ $input-height-mobile: calc($selector-height-mobile * 3 + $spacing-md * 2);
 
   .selectors {
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: $spacing-md;
+    flex-direction: row;
+    align-items: center;
+    gap: $spacing-sm;
   }
 
   .messageList {
@@ -34,8 +31,7 @@ $input-height-mobile: calc($selector-height-mobile * 3 + $spacing-md * 2);
     grid-template-rows: 56px 1fr 56px;
 
     .selectors {
-      flex-direction: row;
+      gap: $spacing-md;
     }
   }
-
 }
