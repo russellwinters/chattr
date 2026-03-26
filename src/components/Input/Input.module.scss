@@ -11,6 +11,11 @@
   color: $color-text-primary;
   border-radius: 10px;
   transition: all 0.5s;
+  /* Prevent iOS auto-zoom: font-size must be at least 16px */
+  font-size: 16px;
+  /* Remove iOS default input styling */
+  -webkit-appearance: none;
+  appearance: none;
 
   &:disabled {
     opacity: 0.6;

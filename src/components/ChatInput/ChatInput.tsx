@@ -1,5 +1,5 @@
 import { dispatchIncomingEvent, dispatchOutgoingEvent } from "@/utils/events";
-import { FC, useState, useEffect } from "react";
+import { FC, useState, useEffect, useRef, useCallback } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useMode } from "@/hooks/useMode";
 import { useCharacter } from "@/hooks/useCharacter";
@@ -16,6 +16,11 @@ const ChatInput: FC = () => {
   const [conversationHistory, setConversationHistory] = useState<ConversationMessage[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Small delay so iOS finishes its zoom animation before we re-focus,
+  // preventing a second auto-zoom event triggered by programmatic focus.
+  const REFOCUS_DELAY_MS = 100;
 
   // Clear conversation history when character changes
   useEffect(() => {
@@ -29,6 +34,37 @@ const ChatInput: FC = () => {
       window.removeEventListener("clearConversation", clearHandler);
     };
   }, []);
+
+  // Handle virtual keyboard appearance on mobile (e.g. iOS).
+  // Debounced so frequent resize events during keyboard animation don't cause janky scrolls.
+  useEffect(() => {
+    let rafId: number | undefined;
+    const handleViewportResize = () => {
+      if (rafId !== undefined) {
+        cancelAnimationFrame(rafId);
+      }
+      rafId = requestAnimationFrame(() => {
+        inputRef.current?.scrollIntoView({ block: "nearest" });
+        rafId = undefined;
+      });
+    };
+
+    window.visualViewport?.addEventListener("resize", handleViewportResize);
+
+    return () => {
+      window.visualViewport?.removeEventListener("resize", handleViewportResize);
+      if (rafId !== undefined) {
+        cancelAnimationFrame(rafId);
+      }
+    };
+  }, []);
+
+  // Re-focus the input after submission with a small delay to prevent iOS auto-zoom
+  const refocusInput = useCallback(() => {
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, REFOCUS_DELAY_MS);
+  }, [REFOCUS_DELAY_MS]);
 
   const handleTranslation = async (value: string) => {
     setError(null);
@@ -127,6 +163,7 @@ const ChatInput: FC = () => {
       dispatchOutgoingEvent(value);
       await handleTranslation(value);
     }
+    refocusInput();
   };
 
   return (
@@ -138,6 +175,7 @@ const ChatInput: FC = () => {
       )}
       <div>
         <Input
+          ref={inputRef}
           value={value}
           label={isLoading ? "Processing..." : "Type here"}
           onChange={(e) => {
@@ -184,3 +222,4 @@ const ChatInput: FC = () => {
 };
 
 export default ChatInput;
+
