@@ -1,5 +1,5 @@
 import cx from "classnames";
-import { ChangeEventHandler, FC, KeyboardEventHandler } from "react";
+import { ChangeEventHandler, FC, forwardRef, KeyboardEventHandler } from "react";
 import styles from "./Input.module.scss";
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
   "aria-label"?: string;
 };
 
-const Input: FC<Props> = ({
+const Input = forwardRef<HTMLInputElement, Props>(({
   label,
   value = "",
   onChange,
@@ -20,9 +20,10 @@ const Input: FC<Props> = ({
   classNames,
   disabled = false,
   "aria-label": ariaLabel,
-}) => {
+}, ref) => {
   return (
     <input
+      ref={ref}
       value={value}
       onChange={onChange}
       onKeyDown={onKeyDown}
@@ -33,6 +34,8 @@ const Input: FC<Props> = ({
       {...(ariaLabel && { "aria-label": ariaLabel })}
     />
   );
-};
+});
+
+Input.displayName = "Input";
 
 export default Input;
